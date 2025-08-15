@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  server:
+    build: ./server
+    container_name: magiccoupon-server
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: magiccoupon-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+  mongo:
+    image: mongo
+    container_name: magiccoupon-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
