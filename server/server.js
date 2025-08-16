@@ -18,7 +18,7 @@ app.use("/api", couponRoutes);   // e.g., /api/add-coupon
 app.use("/auth", authRoutes);    // e.g., /auth/signup or /auth/login
 
 app.get("/", (req, res) => {
-  res.send("Hello World ");
+  res.send("Hello World , ji aap ko jante h ");
 });
 
 const PORT = process.env.PORT || 5000;
