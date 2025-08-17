@@ -22,5 +22,13 @@ router.get("/user/coupons/search", authMiddleware, searchUserCoupons); // User-s
 router.post("/coupons", authMiddleware, createCoupon);
 router.put("/coupons/:id", authMiddleware, updateCoupon);
 router.delete("/coupons/:id", authMiddleware, deleteCoupon);
-
+router.get("/category/:category", async (req, res) => {
+    try {
+      const { category } = req.params;
+      const coupons = await Coupon.find({ category });
+      res.json(coupons);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 export default router;

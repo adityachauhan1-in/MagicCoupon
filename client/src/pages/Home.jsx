@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import CouponCard from '../components/CouponCard';
 import Footer from '../components/Footer';
-import banner from '../assets/banner.png';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+// import banner from '../assets/banner.png';
+import banner1 from '../assets/banner1.png'
+import banner2 from '../assets/banner2.png'
+import banner3 from '../assets/banner3.png'
+import CouponsByCategory from '../components/CouponCategory';
 
 const Home = () => {
   const [coupons, setCoupons] = useState([]);
@@ -12,6 +19,15 @@ const Home = () => {
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    speed: 1000,
+    autoplaySpeed: 2000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   // Fetch all coupons initially
   useEffect(() => {
@@ -33,7 +49,7 @@ const Home = () => {
       }
     };
     fetchCoupons();
-  }, []);
+  }, [API_BASE_URL]);
 
   // Handle live search
   const handleSearchChange = async (value) => {
@@ -88,14 +104,43 @@ const Home = () => {
           className="w-full max-w-lg border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
         />
       </div>
-
+{/* <div className='items-center'>
+  <CouponsByCategory/>
+</div> */}
       {/* Show banner only if not searching */}
       {searchInput.trim() === '' && (
-        <div className="text-center p-10">
-          <h1 className="text-4xl font-bold text-green-700">Welcome to MagicCoupon 🎉</h1>
-          <p className="mt-4 text-gray-600">Find the best deals and save big on your next order.</p>
-          <img src={banner} alt="hero" className="w-full h-80 object-cover rounded-md mt-6" />
-        </div>
+        // <div className="text-center p-10">
+        //   <h1 className="text-4xl font-bold text-green-700">Welcome to MagicCoupon 🎉</h1>
+        //   <p className="mt-4 text-gray-600">Find the best deals and save big on your next order.</p>
+        //   <img src={banner} alt="hero" className="w-full h-80 object-cover rounded-md mt-6" />
+        // </div>
+        <div className="w-full max-w-[1200px] mx-auto mb-3">
+        <Slider {...settings}>
+          <div className="h-[200px] md:h-[320px] lg:h-[360px]">
+            <img 
+              src={banner1} 
+              alt="Offer 1" 
+              className="w-full h-full object-cover rounded-2xl shadow-lg" 
+            />
+          </div>
+          <div className="h-[200px] md:h-[320px] lg:h-[360px]">
+            <img 
+              src={banner2} 
+              alt="Offer 2" 
+              className="w-full h-full object-cover rounded-2xl shadow-lg" 
+            />
+          </div>
+          <div className="h-[200px] md:h-[320px] lg:h-[360px]">
+            <img 
+              src={banner3} 
+              alt="Offer 2" 
+              className="w-full h-full object-cover rounded-2xl shadow-lg" 
+            />
+          </div>
+        </Slider>
+      </div>
+      
+      
       )}
 
       {/* Coupons Section */}
