@@ -120,6 +120,7 @@ const handleDeleteCoupon = async () => {
               Min. purchase: ${minimumPurchase}
             </p>
           )}
+             <p className="text-green-600 font-semibold">💰 Price: ₹{coupon.price}</p>
         {isCouponPage ? (
   <button 
     className="w-full py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-sm"
@@ -138,7 +139,7 @@ const handleDeleteCoupon = async () => {
     onClick={handleSaveCoupon}
     disabled={!user}
   >
-    Save Coupon
+  Buy Coupon
   </button>
 )}
 

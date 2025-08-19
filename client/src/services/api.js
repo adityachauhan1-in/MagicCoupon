@@ -83,3 +83,13 @@ export const deleteCoupon = async (id) => {
     throw error;
   }
 }; 
+export const getCouponsByCategory = async(category) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/coupons/category/${category}}`)
+    const data = await response.json()
+    return data;
+  } catch (error) {
+    console.log("Error in Fetching coupons by category " , error)
+    throw error;
+  }
+}

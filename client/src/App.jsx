@@ -12,11 +12,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './Context/AuthContext';
 import { ErrorPage } from './components/ErrorPage';
+import { CouponProvider } from './Context/CouponContext';
 
 // src/App.jsx
 const App = () => {
   return (
     <AuthProvider>
+      <CouponProvider> 
       <Router>
         <Routes>
           <Route path="/auth" element={<AuthForm />} />
@@ -39,6 +41,7 @@ const App = () => {
         <Footer />
         <ToastContainer autoClose={1000}/>
       </Router>
+      </CouponProvider>
     </AuthProvider>
   );
 };

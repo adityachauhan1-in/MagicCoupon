@@ -1,38 +1,24 @@
-import React  from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext';
-import { toast } from 'react-toastify';
+import React , {useState, useEffect}  from 'react';
+import { NavLink, Link,  } from 'react-router-dom';
+import axios from 'axios'
+import UserMenu from './UserMenu';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-
-  // const location = useLocation();
-  const navigate = useNavigate();
-// const [searchTerm,setSearchTerm]=useState('');
-
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully!');
-    navigate('/auth');
-  };
-
-  // useEffect(() => {
-  //   const searchParams = new URLSearchParams(location.search);
-  //   const urlSearchTerm = searchParams.get('search') || '';
-  //   setSearchTerm(urlSearchTerm);
-  // }, [location.search]);
-
-  // const handleSearch = (e) => {
-  //   e.preventDefault();
-  //   if (!searchTerm.trim()) return;
-    
-  //   // Determine which page we're on
-  //   const searchPath = location.pathname === '/coupons' 
-  //     ? '/coupons' 
-  //     : '/';
-    
-  //   navigate(`${searchPath}?search=${encodeURIComponent(searchTerm.trim())}`);
-  // };
+  const [balance, setBalance] = useState(0);
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/auth/user/wallet", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        });
+        setBalance(res.data.walletBalance);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchBalance();
+  }, []);
+  
 
   return (
     <> 
@@ -43,7 +29,9 @@ const Navbar = () => {
       <Link to="/" className="text-xl font-bold text-green-600 hover:text-green-700">
         MagicCoupon
       </Link>
-     
+      <div className="bg-white text-green-600 px-4 py-2 rounded-lg shadow">
+        💰 Balance: ₹{balance}
+      </div>
       <ul className="flex space-x-4">
         <li>
           <NavLink 
@@ -77,27 +65,8 @@ const Navbar = () => {
         </li>
         
         {/* Conditional rendering based on auth state */}
-        {user ? (
-          <li>
-            <button 
-              onClick={handleLogout}
-              className="hover:text-green-600 transition-colors text-gray-600"
-            >
-              Logout
-            </button>
-          </li>
-        ) : (
-          <li>
-            <NavLink 
-              to="/auth" 
-              className={({ isActive }) => 
-                `hover:text-green-600 transition-colors ${isActive ? 'text-green-600 font-semibold' : 'text-gray-600'}`
-              }
-            >
-              Login
-            </NavLink>
-          </li>
-        )}
+   
+        <UserMenu/>
       </ul>
     </nav>
     </>
