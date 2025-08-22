@@ -1,6 +1,5 @@
 import { useCoupons } from "../Context/CouponContext";
 import CouponCard from "../components/CouponCard";
-import Footer from "../components/Footer";
 import { Banners } from "../components/Banner";
 import { CategorySection } from "../components/CategorySection";
 
@@ -14,7 +13,7 @@ const Home = () => {
   return (
     <>
       {/* Search */}
-      <div className="flex justify-center p-6 bg-gradient-to-r from-green-100 to-green-50 shadow-md">
+      <div className="flex justify-center p-6 bg-gradient-to-r from-green-100 to-green-50 shadow-md pt-20">
   <div className="relative w-full max-w-xl">
     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
       🔍
@@ -48,11 +47,10 @@ const Home = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center p-10 text-gray-600">No coupons found</div>
+          <div className="text-center p-10 text-gray-600 font-extrabold text-3xl">No coupons found</div>
         )}
       </div>
 
-      <Footer />
     </>
   );
 };

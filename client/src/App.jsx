@@ -14,7 +14,6 @@ import { AuthProvider } from './Context/AuthContext';
 import { ErrorPage } from './components/ErrorPage';
 import { CouponProvider } from './Context/CouponContext';
 
-// src/App.jsx
 const App = () => {
   return (
     <AuthProvider>
