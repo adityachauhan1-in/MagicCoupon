@@ -47,36 +47,7 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-// GET coupons by category
 
-router.post("/buy/:couponId", async (req, res) => {
-  try {
-    const userId = req.user.id; // assuming auth middleware
-    const couponId = req.params.couponId;
-
-    const user = await User.findById(userId);
-    const coupon = await Coupon.findById(couponId);
-
-    if (!user || !coupon) return res.status(404).json({ msg: "User or Coupon not found" });
-
-    if (user.walletBalance < coupon.price) {
-      return res.status(400).json({ msg: "Not enough balance" });
-    }
-
-    // Deduct balance
-    user.walletBalance -= coupon.price;
-    await user.save();
-
-    // Save coupon to user's account (simplified)
-    user.coupons = [...(user.coupons || []), coupon];
-    await user.save();
-
-    res.json({ msg: "Coupon purchased successfully", walletBalance: user.walletBalance });
-  } catch (error) {
-    res.status(500).json({ msg: "Server error", error });
-  }
-});
-// Get user wallet balance
 
 
 
