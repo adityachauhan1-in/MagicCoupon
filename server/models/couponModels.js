@@ -75,6 +75,10 @@ const couponSchema = new mongoose.Schema({
     featured: {
         type: Boolean,
         default: false
+    },
+    price: {
+        type: Number,
+        required: true
     }
 }, {
     savedBy: [{

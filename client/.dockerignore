@@ -1,8 +1,30 @@
+# Node dependencies
 node_modules
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
 build
+dist
+.cache
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# Git & config files
 .git
 .gitignore
+.env
+.env.local
+.env.*.local
+
+# Docker / Compose files (not needed inside container)
 Dockerfile
 docker-compose.yml
-npm-debug.log
-yarn-error.log
+
+# VSCode settings
+.vscode

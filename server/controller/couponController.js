@@ -108,7 +108,6 @@ export const getCouponById = async (req, res) => {
         const { id } = req.params;
         
         const coupon = await Coupon.findById(id);
-  console.log(process.env.JWT_SECRET)
         
         if (!coupon) {
             return res.status(404).json({

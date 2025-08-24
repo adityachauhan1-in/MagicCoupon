@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+    walletBalance: {
+        type: Number,
+        default:1000
+    },
     savedCoupons: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Coupon'
