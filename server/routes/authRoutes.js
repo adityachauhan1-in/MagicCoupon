@@ -5,7 +5,7 @@ import {
   getCurrentUser,
   saveCoupon,
   removeCoupon,
-  getSavedCoupons
+  getSavedCoupons,
 } from "../controller/authController.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"; 
 
@@ -20,5 +20,7 @@ router.get("/me", authMiddleware,getCurrentUser);
 router.post("/save-coupon",authMiddleware, saveCoupon);
 router.delete("/remove-coupon/:couponId", authMiddleware, removeCoupon);
 router.get("/saved-coupons",authMiddleware, getSavedCoupons);
+
+
 
 export default router;

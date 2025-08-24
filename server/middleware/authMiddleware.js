@@ -3,11 +3,10 @@ import User from '../models/userModels.js'
 export const authMiddleware = async (req, res, next) => {
                                                    // authMiddleware.js
   try {
-    // console.log('\n=== NEW REQUEST ===');
-    // console.log('Request headers:', req.headers);
+ 
     
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    // console.log('Extracted token:', token);
+    
 
     if (!token) {
       throw new Error('No token provided');
@@ -18,9 +17,8 @@ export const authMiddleware = async (req, res, next) => {
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET, {
         algorithms: ['HS256'],
-        clockTolerance: 30 // 30 seconds grace period for clock skew
+        clockTolerance: 30 
       });
-      // console.log('Successfully decoded token:', decoded);
     } catch (verifyError) {
       console.error('Token verification failed:', {
         name: verifyError.name,
@@ -33,7 +31,6 @@ export const authMiddleware = async (req, res, next) => {
 
     // Verify user exists
     const user = await User.findById(decoded.userId).select('_id');
-    // console.log('Found user:', user?._id);
     
     if (!user) {
       throw new Error('User no longer exists');

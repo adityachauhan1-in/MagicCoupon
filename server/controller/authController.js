@@ -208,7 +208,8 @@ export const getSavedCoupons = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: user.savedCoupons
+            data: user.savedCoupons,
+
         });
     } catch (error) {
         res.status(500).json({
@@ -218,3 +219,19 @@ export const getSavedCoupons = async (req, res) => {
         });
     }
 }; 
+
+
+export const buyCoupon = async (req, res) => {
+    try {
+      const userId = req.user.id; // comes from auth middleware
+      const user = await User.findById(userId);
+  
+      if (!user) return res.status(404).json({ msg: "User not found" });
+  
+      res.json({ walletBalance: user.walletBalance });
+    } catch (error) {
+      res.status(500).json({ msg: "Server error", error });
+    }
+  };
+  
+     
