@@ -3,4 +3,4 @@ npm-debug.log*
 yarn-error.log*
 .git
 .DS_Store
-.env
+
