@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL =  process.env.API_BASE_URL||"http://localhost:5000/api";
 
 // Get all coupons
 export const getAllCoupons = async () => {
@@ -7,21 +7,25 @@ export const getAllCoupons = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching coupons:', error);
+    console.error("Error fetching coupons:", error);
     throw error;
   }
 };
+
 // Search coupons
 export const searchCoupons = async (searchTerm) => {
   try {
-      const response = await fetch(`${API_BASE_URL}/coupons/search?q=${searchTerm}`);
-      const data = await response.json();
-      return data;
+    const response = await fetch(
+      `${API_BASE_URL}/coupons/search?q=${encodeURIComponent(searchTerm)}`
+    );
+    const data = await response.json();
+    return data;
   } catch (error) {
-      console.error('Error searching coupons:', error);
-      throw error;
+    console.error("Error searching coupons:", error);
+    throw error;
   }
 };
+
 // Get single coupon by ID
 export const getCouponById = async (id) => {
   try {
@@ -29,7 +33,7 @@ export const getCouponById = async (id) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching coupon:', error);
+    console.error("Error fetching coupon:", error);
     throw error;
   }
 };
@@ -38,16 +42,14 @@ export const getCouponById = async (id) => {
 export const createCoupon = async (couponData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/coupons`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(couponData),
     });
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error creating coupon:', error);
+    console.error("Error creating coupon:", error);
     throw error;
   }
 };
@@ -56,16 +58,14 @@ export const createCoupon = async (couponData) => {
 export const updateCoupon = async (id, couponData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/coupons/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(couponData),
     });
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error updating coupon:', error);
+    console.error("Error updating coupon:", error);
     throw error;
   }
 };
@@ -74,22 +74,26 @@ export const updateCoupon = async (id, couponData) => {
 export const deleteCoupon = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/coupons/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error deleting coupon:', error);
+    console.error("Error deleting coupon:", error);
     throw error;
   }
-}; 
-export const getCouponsByCategory = async(category) => {
+};
+
+// Get coupons by category
+export const getCouponsByCategory = async (category) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/coupons/category/${category}}`)
-    const data = await response.json()
+    const response = await fetch(
+      `${API_BASE_URL}/coupons/category/${encodeURIComponent(category)}`
+    );
+    const data = await response.json();
     return data;
   } catch (error) {
-    console.log("Error in Fetching coupons by category " , error)
+    console.log("Error in Fetching coupons by category ", error);
     throw error;
   }
-}
+};

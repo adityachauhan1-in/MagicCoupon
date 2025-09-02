@@ -4,7 +4,7 @@ const AuthContext = createContext(); // creation of context ....
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // to prevent showing wrong page before checking
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("user");
       }
     }
-    setLoading(false); // Done checking
+    setLoading(false); 
   }, []);
 
   const login = (userData, token) => {

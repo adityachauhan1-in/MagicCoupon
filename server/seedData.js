@@ -388,19 +388,20 @@ const sampleCoupons = [
     description: "Find your zen with 20% off yoga classes.",
     code: "YOGA20"
   },
+
   {
-    title: "50% Off Concert Tickets",
-    store: "Ticketmaster",
+    title: "99% Off Beach Tickets",
+    store: "Bahchaula",
     startDate: "2025-01-01",
       endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
     price:20,
-    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
+    image: "https://imgs.search.brave.com/s-C_AYX0hNeFZtP9pk2WplVxIV7_PShkHndi8yQklw8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Z2Fqd2xhY3NlYW4u/Y29tL2NvbnRlbnQv/dXBsb2Fkcy8yMDE2/LzAyL2FsdHVzYmFk/cmVxdWlja19pY29u/XzIzNjB4MjM2MC5w/bmc",
     category: "Entertainment",
-    minimumPurchase: 40,
-    discountAmount: 20,
-    discountPercentage: 50,
-    description: "Experience live music at half price.",
-    code: "CONCERT50"
+    minimumPurchase: 4,
+    discountAmount: 2,
+    discountPercentage: 99,
+    description: "Experience beautiful beach.",
+    code: "Aditya421"
   }
 ];
 
@@ -414,7 +415,6 @@ const seedDatabase = async () => {
     await Coupon.deleteMany({});
     console.log('Cleared existing coupons');
 
-    // Insert sample coupons
     const insertedCoupons = await Coupon.insertMany(sampleCoupons);
     console.log(`Successfully added ${insertedCoupons.length} coupons to the database`);
 
@@ -428,5 +428,5 @@ const seedDatabase = async () => {
   }
 };
 
-// Run the seed function
+
 seedDatabase(); 

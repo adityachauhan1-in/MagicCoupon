@@ -1,244 +1,206 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { useAuth } from '../Context/AuthContext';
-import { X, Trash2, Copy } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../Context/AuthContext";
+import { X, Trash2, Copy } from "lucide-react";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   const { user } = useAuth();
 
-  const [isUsed, setIsUsed] = useState(false);
+  const savedId = coupon?._id;
+  const [isUsed, setIsUsed] = useState(Boolean(coupon?.isUsed));
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  // 🔹 Check if coupon was already used (persisted in localStorage)
+  const [imageError, setImageError] = useState(false);
+  const [saveStatus,setSaveStatus] = useState("default")
   useEffect(() => {
-    const usedCoupons = JSON.parse(localStorage.getItem("usedCoupons") || "[]");
-    if (usedCoupons.includes(coupon._id)) {
-      setIsUsed(true);
+    if (typeof coupon?.isUsed !== "undefined") {
+      setIsUsed(Boolean(coupon.isUsed));
     }
-  }, [coupon._id]);
+  }, [coupon?.isUsed]);
 
   const handleSaveCoupon = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found in storage');
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setSaveStatus("error")
+        return;
+      }
+
+        const payloadId = coupon?.couponId || coupon?._id;
 
       const response = await axios.post(
-        'http://localhost:5000/auth/save-coupon',
-        { couponId: coupon._id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          timeout: 5000,
-        }
+        `${API_BASE_URL}/api/coupons/save`,
+        { couponId: payloadId },
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, timeout: 5000 }
       );
-
-      toast.success(response.data.message);
+   setSaveStatus("added")
+   
     } catch (error) {
-      console.error('Save error:', error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        toast.error('Session expired. Please login again');
+      console.error("Save error:", error);
+      if (error.response?.status === 400 && error.response.data.message === "Coupon already saved") {
+        setSaveStatus("already")
+     
+      } else if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        toast.error("Session expired. Please login again");
       } else {
-        toast.error(error.response?.data?.message || 'Failed to save coupon');
+        setSaveStatus("error")
       }
+      setTimeout(() => setSaveStatus("default"),2000)
     }
   };
 
   const handleDeleteCoupon = async () => {
+    if (!isCouponPage) return;
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please login to delete coupons");
+        return;
+      }
 
-      const response = await axios.delete(
-        `http://localhost:5000/api/coupons/${coupon._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
 
-      toast.success(response.data.message || 'Coupon deleted');
-      onRemove?.();
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || 'Failed to delete');
+      await axios.delete(`${API_BASE_URL}/api/coupons/saved/${savedId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      onRemove?.(savedId);
+    } catch (err) {
+      console.error("Delete saved coupon err:", err);
+      toast.error(err.response?.data?.message || "Failed to remove coupon");
     }
   };
 
   const handleUseCoupon = () => setShowModal(true);
 
-  const closeAndMarkUsed = () => {
+  const closeAndMarkUsed = async () => {
     setShowModal(false);
-    setIsUsed(true);
+    if (isUsed) return;
 
-    // 🔹 Save "used" status in localStorage so it persists after reload
-    const usedCoupons = JSON.parse(localStorage.getItem("usedCoupons") || "[]");
-    if (!usedCoupons.includes(coupon._id)) {
-      usedCoupons.push(coupon._id);
-      localStorage.setItem("usedCoupons", JSON.stringify(usedCoupons));
+    const idToMark = savedId || coupon?.couponId || coupon?._id;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`${API_BASE_URL}/api/coupons/saved/${idToMark}/use`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setIsUsed(true);
+    } catch (err) {
+      console.error("Mark used error:", err);
+      toast.error("Failed to mark coupon as used");
     }
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(coupon.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      navigator.clipboard.writeText(coupon?.code || coupon?.couponCode || "NOCODE");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch (err) {
+      console.error("copy err", err);
+    }
   };
 
-  const title = coupon?.title || coupon?.name || 'Special Offer';
-  const description = coupon?.description || 'Limited time offer';
-  const code = coupon?.code || 'NOCODE';
-  const expiry =
-    coupon?.endDate ||
-    coupon?.expiry ||
-    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  const image = coupon?.image || 'https://via.placeholder.com/300';
-  const store = coupon?.store || 'Our Store';
-  const discountPercentage = coupon?.discountPercentage || 10;
-  const minimumPurchase = coupon?.minimumPurchase || 0;
+  const handleImageError = () => setImageError(true);
+
+  const title = coupon?.title || coupon?.name || "Special Offer";
+  const description = coupon?.description || coupon?.desc || "Limited time offer";
+  const code = coupon?.code || coupon?.couponCode || "NOCODE";
+  const expiry = coupon?.endDate || coupon?.expiry || coupon?.validTill || null;
+  const image = !imageError && (coupon?.image || coupon?.imageUrl) ? (coupon?.image || coupon?.imageUrl) : null;
+  const store = coupon?.store || "Our Store";
+  const discountPercentage = coupon?.discountPercentage || coupon?.discount || 0;
+  const minimumPurchase = coupon?.minimumPurchase || coupon?.minPurchase || 0;
 
   return (
     <>
-      {/* Card */}
       <div className="relative bg-white rounded-xl shadow-md p-4 transition duration-300 h-full flex flex-col">
-        
-        {/* Delete button always clickable (above dim layer) */}
         {isCouponPage && (
           <button
             onClick={handleDeleteCoupon}
             className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 hover:bg-white shadow-sm hover:shadow text-red-600"
+            title="Remove saved coupon"
           >
             <Trash2 className="w-4 h-4" />
           </button>
         )}
 
-        {/* Image (dimmed if used) */}
         <div className="relative">
-          <img
-            src={image}
-            alt={title}
-            className={`w-full h-40 object-cover rounded-lg transition duration-300 ${
-              isUsed ? "opacity-40" : "opacity-100"
-            }`}
-          />
+          {image ? (
+            <img src={image} alt={title} onError={handleImageError} className={`w-full h-40 object-cover rounded-lg transition duration-300 ${isUsed ? "opacity-40" : "opacity-100"}`} />
+          ) : (
+            <div className={`w-full h-40 rounded-lg bg-gray-100 flex items-center justify-center ${isUsed ? "opacity-40" : "opacity-100"}`}>
+              <span className="text-sm text-gray-400">No image</span>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col">
-          <h2
-            className="text-xl font-bold text-gray-800 mb-2 overflow-hidden"
-            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
-          >
-            {title}
-          </h2>
-
+          <h2 className="text-xl font-bold text-gray-800 mb-2 overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{title}</h2>
           {store && <p className="text-sm text-blue-600 font-medium mb-2">{store}</p>}
+          <p className="text-sm text-gray-600 mb-4 flex-1 overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>{description}</p>
 
-          <p
-            className="text-sm text-gray-600 mb-4 flex-1 overflow-hidden"
-            style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}
-          >
-            {description}
-          </p>
-
-          {/* code + expiry */}
           <div className="flex justify-between items-center mb-3">
             {isCouponPage && isUsed ? (
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-mono font-semibold line-through">
-                {code}
-              </span>
-            ) : (
-              <span />
-            )}
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-mono font-semibold line-through">{code}</span>
+            ) : <span />}
 
-            <span className="text-red-600 text-xs font-medium">
-              Expires: {new Date(expiry).toLocaleDateString()}
-            </span>
+            <span className="text-red-600 text-xs font-medium">Expires: {expiry ? new Date(expiry).toLocaleDateString() : "—"}</span>
           </div>
 
-          {discountPercentage && (
-            <div className="text-center mb-1">
-              <span className="text-2xl font-bold text-green-600">
-                {discountPercentage}% OFF
-              </span>
-            </div>
-          )}
-
-          {minimumPurchase > 0 && (
-            <p className="text-xs text-gray-500 text-center mb-3">
-              Min. purchase: ${minimumPurchase}
-            </p>
-          )}
+          {discountPercentage ? <div className="text-center mb-1"><span className="text-2xl font-bold text-green-600">{discountPercentage}% OFF</span></div> : null}
+          {minimumPurchase > 0 && <p className="text-xs text-gray-500 text-center mb-3">Min. purchase: ${minimumPurchase}</p>}
 
           <div className="mt-auto">
-            {isCouponPage ? (
-              !isUsed ? (
-                <button
-                  className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${
-                    user
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                  }`}
-                  onClick={handleUseCoupon}
-                  disabled={!user}
-                >
-                  Use Coupon
-                </button>
-              ) : (
-                <div className="text-center text-sm font-semibold text-red-500">✅ Coupon Used</div>
-              )
-            ) : (
-              <button
-                className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${
-                  user
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                }`}
-                onClick={handleSaveCoupon}
-                disabled={!user}
-              >
-                Get Coupon
-              </button>
-            )}
+            {isCouponPage ? (!isUsed ?  
+            <button className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${user ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`} onClick={handleUseCoupon} disabled={!user}>Use Coupon</button> : 
+
+
+<div className="text-center text-sm font-semibold text-red-500">✅ Coupon Used</div>) : ( 
+ <button
+ className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${
+   !user
+     ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+     : saveStatus === "added"
+     ? "bg-green-600 text-white"
+     : saveStatus === "already"
+     ? "bg-yellow-500 text-white"
+     : saveStatus === "error"
+     ? "bg-red-500 text-white"
+     : "bg-blue-600 text-white hover:bg-blue-700"
+ }`}
+ onClick={handleSaveCoupon}
+ disabled={!user || saveStatus === "added"}
+>
+ {saveStatus === "added"
+   ? "Added ✅"
+   : saveStatus === "already"
+   ? "Already Saved ⚠️"
+   : saveStatus === "error"
+   ? "Failed ❌"
+   : "Get Coupon"}
+</button>
+)}
           </div>
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
-            <button
-              className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100"
-              onClick={closeAndMarkUsed}
-            >
-              <X className="w-5 h-5 text-gray-600" />
-            </button>
-
+            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100" onClick={closeAndMarkUsed}><X className="w-5 h-5 text-gray-600" /></button>
             <h3 className="text-lg font-semibold mb-2">{title}</h3>
             <p className="text-sm text-gray-600 mb-4">{description}</p>
-
             <div className="border rounded-xl p-4 text-center">
               <div className="text-xs text-gray-500 mb-1">Your code</div>
-              <div className="font-mono text-2xl font-bold tracking-wider mb-3">
-                {code}
-              </div>
-
-              <button
-                onClick={handleCopyCode}
-                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 ${
-                  copied
-                    ? 'bg-green-500 text-white'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                }`}
-              >
-                <Copy className="w-4 h-4" />
-                {copied ? 'Copied ✅' : 'Copy Code'}
+              <div className="font-mono text-2xl font-bold tracking-wider mb-3">{code}</div>
+              <button onClick={handleCopyCode} className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 ${copied ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}>
+                <Copy className="w-4 h-4" /> {copied ? "Copied ✅" : "Copy Code"}
               </button>
-
-              <div className="mt-3 text-xs text-gray-500">
-                Show this code at checkout
-              </div>
+              <div className="mt-3 text-xs text-gray-500">Show this code at checkout</div>
             </div>
           </div>
         </div>

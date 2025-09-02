@@ -15,7 +15,7 @@ const FeedbackSupport = () => {
       return;
     }
 
-    // Later: send to backend API
+   
     toast.success("Thank you for your feedback!");
     
     setName("");

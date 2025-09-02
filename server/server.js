@@ -10,18 +10,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
+  // Connect to MongoDB
 connectDB();
 
-// ✅ Route setup
-app.use("/api", couponRoutes);   // e.g., /api/add-coupon
-app.use("/auth", authRoutes);    // e.g., /auth/signup or /auth/login
+// Route setup
+app.use("/api/coupons", couponRoutes);   
+app.use("/auth", authRoutes);          
 
 app.get("/", (req, res) => {
-  res.send("Hello World , ji aap ko jante h ");
+  res.send("Hello World ");
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running(testing) on port ${PORT}`);
 });

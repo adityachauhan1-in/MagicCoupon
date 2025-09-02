@@ -71,6 +71,10 @@ const couponSchema = new mongoose.Schema({
     terms: {
         type: String,
         trim: true
+
+
+
+
     },
     featured: {
         type: Boolean,
@@ -80,25 +84,25 @@ const couponSchema = new mongoose.Schema({
         type: Number,
         required: true
     }
-}, {
+, 
     savedBy: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-      }],
-    timestamps: true
-});
+      }], 
+    },
+    {
+    timestamps: true }
+);
 
-// Index for better query performance
 couponSchema.index({ category: 1, isActive: 1 });
 couponSchema.index({ code: 1 });
 couponSchema.index({ endDate: 1 });
 
-// Virtual for checking if coupon is expired
+
 couponSchema.virtual('isExpired').get(function() {
     return new Date() > this.endDate;
 });
 
-// Virtual for checking if coupon is available
 couponSchema.virtual('isAvailable').get(function() {
     const now = new Date();
     return this.isActive && 

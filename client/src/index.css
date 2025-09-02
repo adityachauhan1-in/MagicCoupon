@@ -22,12 +22,9 @@
   animation: fadeIn 0.2s ease-out;
 }
 .used-image {
-  opacity: 0.4;  /* Makes the image lighter */
+  opacity: 0.4; 
   filter: grayscale(100%);
 }
 
 
-/* code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-} */
+

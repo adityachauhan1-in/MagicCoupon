@@ -1,3 +1,4 @@
+import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CouponContext = createContext();
@@ -58,17 +59,25 @@ export const CouponProvider = ({ children }) => {
     };
     fetchCoupons();
   }, [API_BASE_URL, selectedCategory]);
-
+ 
   // Search filter
-  const handleSearchChange = (value) => {
+  const handleSearchChange = async(value) => {
     setSearchInput(value);
     if (value.trim() === "") {
       setFilteredCoupons(coupons);
     } else {
-      const filtered = coupons.filter((coupon) =>
-        coupon.title.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredCoupons(filtered);
+      try {
+        
+        const response = await axios.get(`${API_BASE_URL}/coupons/search`, {
+          params: { q: value }
+        });
+         if(response.data.success){
+          setFilteredCoupons(response.data.data)
+         }
+        
+      } catch (error) {
+       console.log("error searching coupons : " , error) 
+      }
     }
   };
 
