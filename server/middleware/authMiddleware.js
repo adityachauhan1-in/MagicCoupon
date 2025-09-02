@@ -1,51 +1,35 @@
-import jwt from 'jsonwebtoken'
-import User from '../models/userModels.js'
+import jwt from 'jsonwebtoken';
+import User from '../models/userModels.js';
+
 export const authMiddleware = async (req, res, next) => {
-                                                   // authMiddleware.js
   try {
- 
-    
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-
-    if (!token) {
-      throw new Error('No token provided');
+    const authHeader = req.header('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: 'Authorization token missing' });
     }
 
-    // Verify token with detailed error handling
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET, {
-        algorithms: ['HS256'],
-        clockTolerance: 30 
-      });
-    } catch (verifyError) {
-      console.error('Token verification failed:', {
-        name: verifyError.name,
-        message: verifyError.message,
-        expiredAt: verifyError.expiredAt,
-        dateNow: new Date()
-      });
-      throw verifyError;
+    const token = authHeader.replace('Bearer ', '');
+
+//verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ['HS256'],
+      clockTolerance: 30
+    });
+
+    if (!decoded?.userId) {
+      return res.status(401).json({ success: false, message: 'Invalid token payload' });
     }
 
-    // Verify user exists
+    // Find user
     const user = await User.findById(decoded.userId).select('_id');
-    
     if (!user) {
-      throw new Error('User no longer exists');
+      return res.status(401).json({ success: false, message: 'User no longer exists' });
     }
 
     req.userId = user._id;
     next();
   } catch (error) {
-    console.error('Final auth error:', {
-      error: error.message,
-      stack: error.stack
-    });
-    return res.status(401).json({
-      success: false,
-      message: 'Not authorized: ' + error.message
-    });
+    console.error('Auth error:', error.message);
+    return res.status(401).json({ success: false, message: 'Not authorized' });
   }
 };

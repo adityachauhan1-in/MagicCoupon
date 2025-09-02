@@ -1,54 +1,62 @@
-import express from 'express';
+
+import express from "express";
 import {
-    getAllCoupons,
-    getCouponById,
-    createCoupon,
-    updateCoupon, 
-    deleteCoupon,
-    searchCoupon,
-    searchUserCoupons, // Add this
-   
-} from '../controller/couponController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
-import Coupon from '../models/couponModels.js';
-import User from '../models/userModels.js';
+  getAllCoupons,
+  getCouponById,
+  createCoupon,
+  updateCoupon,
+  deleteCoupon,
+  searchCoupon,
+  searchUserCoupons,
+  saveCoupon,
+  getSavedCoupons,
+  removeCoupon,
+  markSavedCouponUsed,
+} from "../controller/couponController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+import Coupon from "../models/couponModels.js";
 
 const router = express.Router();
 
-// Public routes
-router.get("/coupons", getAllCoupons);
-router.get("/coupons/search", searchCoupon); // Public search
-router.get("/coupons/:id", getCouponById);
-
-// Authenticated routes
-router.get("/user/coupons/search", authMiddleware, searchUserCoupons); // User-specific search
-router.post("/coupons", authMiddleware, createCoupon);
-router.put("/coupons/:id", authMiddleware, updateCoupon);
-router.delete("/coupons/:id", authMiddleware, deleteCoupon);
-
-router.get("/coupons/category/:category", async (req, res) => {
+//for public routes
+router.get("/", getAllCoupons);
+router.get("/search", searchCoupon);
+router.get("/categories/list", async (req, res) => {
   try {
-   
+    const categories = await Coupon.distinct("category");
+    res.json({ success: true, data: categories });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+router.get("/category/:category", async (req, res) => {
+  try {
     const { category } = req.params;
     const coupons = await Coupon.find({ category });
     res.json({ success: true, data: coupons });
   } catch (err) {
-   
-    res.status(500).json({ message: "Server error" });
-  }
-});
-// GET all unique categories
-router.get("/categories", async (req, res) => {
-  try {
-    const categories = await Coupon.distinct("category");
-    res.json(categories);
-  } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
+// Get coupon by ID 
+router.get("/:id", getCouponById);
 
+//for authenticated routes
+router.use(authMiddleware);
 
+router.post("/save", saveCoupon);
 
+router.get("/saved/list", getSavedCoupons);
+
+router.delete("/saved/:couponId", removeCoupon);
+
+router.put("/saved/:couponId/use", markSavedCouponUsed);
+
+//for admin
+router.post("/", createCoupon);
+router.get("/user/search", searchUserCoupons);
+router.put("/:id", updateCoupon);
+router.delete("/:id", deleteCoupon);
 
 export default router;

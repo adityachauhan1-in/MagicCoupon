@@ -19,7 +19,6 @@ export const ErrorPage = () => {
                     />
                 </figure>
                 <h1 className="text-3xl font-bold text-gray-800 mb-6">Oops! Page not found</h1>
-                <h1 className="text-3xl font-bold text-gray-800 mb-6">Chal ab nikal !!</h1>
                 <p className="text-lg text-gray-600 mb-8">
                     The page you're looking for doesn't exist or has been moved.
                 </p>

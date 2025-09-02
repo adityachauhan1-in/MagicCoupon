@@ -13,7 +13,6 @@ const UserMenu = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/auth");
-    toast.success("Logout Successfully")
   };
 
   //  Close on click outside

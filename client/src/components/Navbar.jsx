@@ -4,53 +4,43 @@ import UserMenu from "./UserMenu";
 
 const Navbar = () => {
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 px-6 py-3 flex justify-between items-center">
-      {/* Logo */}
-      <Link to="/" className="text-2xl font-bold text-green-600 hover:text-green-700">
+    <nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/80 shadow-md px-6 py-3 flex justify-between items-center transition-all duration-300">
+      
+      <Link
+        to="/"
+        className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-105 transform transition"
+      >
         MagicCoupon
       </Link>
 
-      {/* Menu */}
+      {/* Menu Links */}
       <ul className="flex space-x-6 items-center">
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `transition-colors text-lg ${
-                isActive ? "text-green-600 font-semibold" : "text-gray-600 hover:text-green-600"
-              }`
-            }
-          >
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/coupons"
-            className={({ isActive }) =>
-              `transition-colors text-lg ${
-                isActive ? "text-green-600 font-semibold" : "text-gray-600 hover:text-green-600"
-              }`
-            }
-          >
-            My Coupons
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/FeedbackSupport"
-            className={({ isActive }) =>
-              `transition-colors text-lg ${
-                isActive ? "text-green-600 font-semibold" : "text-gray-600 hover:text-green-600"
-              }`
-            }
-          >
-            Feedback
-          </NavLink>
-        </li>
+        {[
+          { name: "Home", path: "/" },
+          { name: "My Coupons", path: "/coupons" },
+          { name: "Feedback", path: "/FeedbackSupport" },
+        ].map((link) => (
+          <li key={link.name}>
+            <NavLink
+              to={link.path}
+              className={({ isActive }) =>
+                `relative px-2 py-1 text-lg font-medium transition-all duration-200 
+                 ${
+                   isActive
+                     ? "text-purple-600 before:absolute before:-bottom-1 before:left-0 before:w-full before:h-1 before:rounded-full before:bg-purple-500"
+                     : "text-gray-600 hover:text-blue-600 hover:scale-105 transform"
+                 }`
+              }
+            >
+              {link.name}
+            </NavLink>
+          </li>
+        ))}
 
         {/* User Menu */}
-        <UserMenu />
+        <li>
+          <UserMenu />
+        </li>
       </ul>
     </nav>
   );
