@@ -12,11 +12,15 @@ import {
   getSavedCoupons,
   removeCoupon,
   markSavedCouponUsed,
+  redeemCoupon,
+  getMyCreatedCoupons
 } from "../controller/couponController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import Coupon from "../models/couponModels.js";
 
 const router = express.Router();
+
+// admit routes 
 
 //for public routes
 router.get("/", getAllCoupons);
@@ -39,11 +43,11 @@ router.get("/category/:category", async (req, res) => {
   }
 });
 
-// Get coupon by ID 
-router.get("/:id", getCouponById);
 
-//for authenticated routes
+
+
 router.use(authMiddleware);
+
 
 router.post("/save", saveCoupon);
 
@@ -54,9 +58,14 @@ router.delete("/saved/:couponId", removeCoupon);
 router.put("/saved/:couponId/use", markSavedCouponUsed);
 
 //for admin
-router.post("/", createCoupon);
+router.post("/", createCoupon);// above is the get request , this one is POST  to create 
 router.get("/user/search", searchUserCoupons);
 router.put("/:id", updateCoupon);
 router.delete("/:id", deleteCoupon);
+router.get("/my-create",authMiddleware,getMyCreatedCoupons);
+router.get("/:id", getCouponById);
+
+router.post("/redeem/:id",authMiddleware,redeemCoupon)
 
 export default router;
+ 

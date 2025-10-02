@@ -1,11 +1,12 @@
 node_modules
 npm-debug.log
-.env
-*.log
-.DS_Store
 .git
 .gitignore
 README.md
-coverage
+.env
 .nyc_output
-
+coverage
+.DS_Store
+*.log
+.vscode
+.idea

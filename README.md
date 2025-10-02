@@ -1,68 +1,153 @@
-MagicCoupon
+# MagicCoupon
 
-MagicCoupon is a React + Node.js full-stack application that helps users find and manage amazing coupon deals with ease.
+A coupon management application with authentication and user management.
 
-🚀 Quick Start (One Command)
-docker-compose up --build
+## 🚀 Quick Start with Docker
 
+### Prerequisites
+- Docker Desktop installed
+- Git
 
-Then:
-
-Frontend: http://localhost:3000
-
-Backend API: http://localhost:5000
-
-📌 Features
-
-User authentication (Signup/Login)
-
-View, search, and filter coupons
-
-Add coupons to My Coupons
-
-Remove coupons from My Coupons
-
-Responsive UI with React and Tailwind CSS
-
-Backend API using Node.js, Express, and MongoDB
-
-Fully containerized with Docker for easy setup
-
-🛠 Installation & Setup
-1. Clone the repository
-git clone https://github.com/adityachauhan1-in/MagicCoupon.git
-
-2. Navigate to the project folder
+### 1. Clone the Repository
+```bash
+git clone https://github.com/adityachauhan1-in/MagicCoupon
 cd MagicCoupon
+```
 
-3. Run with Docker Compose (Recommended)
+### 2. Environment Setup
+Create a `.env` file in the `server` directory with your configuration:
+```bash
+# Server Configuration
+NODE_ENV=production
+PORT=5000
+MONGODB_URI=mongodb://mongo:27017/magiccoupon
+JWT_SECRET=your_secure_jwt_secret_here
 
-Make sure you have Docker installed and running.
+# Google OAuth (if using)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/auth/google/callback
+```
 
+### 3. Run with Docker Compose
+```bash
+# Build and start all services
 docker-compose up --build
 
+# Or run in background
+docker-compose up -d --build
+```
 
-This will automatically build and start both the frontend and backend, along with MongoDB.
+### 4. Access the Application
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **MongoDB**: localhost:27017
 
-🔑 Environment Variables
+## 🐳 Docker Commands
 
-In server/.env:
+### Start Services
+```bash
+docker-compose up
+```
 
-MONGO_URI=mongodb://mongo:27017/magiccoupon
-JWT_SECRET=your_jwt_secret
-PORT=5000
+### Stop Services
+```bash
+docker-compose down
+```
 
+### Rebuild and Start
+```bash
+docker-compose up --build
+```
 
-In client/.env:
+### View Logs
+```bash
+# All services
+docker-compose logs
 
-REACT_APP_API_URL=http://localhost:5000
+# Specific service
+docker-compose logs server
+docker-compose logs client
+docker-compose logs mongo
+```
 
-💻 Technologies Used
+### Clean Up
+```bash
+# Stop and remove containers, networks, volumes
+docker-compose down -v
 
-Frontend: React, Tailwind CSS
+# Remove all images
+docker-compose down --rmi all
+```
 
-Backend: Node.js, Express
+## 🔧 Troubleshooting
 
-Database: MongoDB
+### Port Already in Use
+If ports 3000, 5000, or 27017 are already in use:
+```bash
+# Check what's using the ports
+netstat -ano | findstr :3000
+netstat -ano | findstr :5000
+netstat -ano | findstr :27017
 
-Containerization: Docker, Docker Compose
+# Or modify docker-compose.yml to use different ports
+```
+
+### MongoDB Connection Issues
+```bash
+# Check if MongoDB container is running
+docker-compose ps mongo
+
+# Check MongoDB logs
+docker-compose logs mongo
+
+# Restart MongoDB service
+docker-compose restart mongo
+```
+
+### Build Issues
+```bash
+# Clean Docker cache
+docker system prune -a
+
+# Rebuild without cache
+docker-compose build --no-cache
+```
+
+## 📁 Project Structure
+```
+MagicCoupon/
+├── client/          # React frontend
+├── server/          # Node.js backend
+├── docker-compose.yml
+├── .dockerignore
+└── README.md
+```
+
+## 🛠️ Development
+
+### Without Docker
+```bash
+# Backend
+cd server
+npm install
+npm run dev
+
+# Frontend (in new terminal)
+cd client
+npm install
+npm start
+```
+
+### With Docker
+```bash
+# Development mode with volume mounting
+docker-compose -f docker-compose.dev.yml up
+```
+
+## 📝 Notes
+- The application uses MongoDB for data storage
+- Authentication is handled with JWT tokens
+- Google OAuth is configured but optional
+- All services restart automatically unless stopped manually
+- Health checks are implemented for better monitoring

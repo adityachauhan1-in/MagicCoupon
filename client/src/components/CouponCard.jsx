@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { redeemCoupon } from "../services/api";
 import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 import { X, Trash2, Copy } from "lucide-react";
@@ -9,19 +10,28 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:500
 const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   const { user } = useAuth();
 
-  const savedId = coupon?._id;
+             const savedId = coupon?._id;
   const [isUsed, setIsUsed] = useState(Boolean(coupon?.isUsed));
-  const [showModal, setShowModal] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [saveStatus,setSaveStatus] = useState("default")
-  useEffect(() => {
-    if (typeof coupon?.isUsed !== "undefined") {
+        const [showModal, setShowModal] = useState(false);
+            const [copied, setCopied] = useState(false);
+ const [imageError, setImageError] = useState(false);
+    const [saveStatus,setSaveStatus] = useState("default")
+  
+  // Check if current user is the creator of this coupon
+           const isCreator = user && coupon?.creatorId && user._id === coupon.creatorId;
+           useEffect(() => {
+             if (typeof coupon?.isUsed !== "undefined") {
       setIsUsed(Boolean(coupon.isUsed));
     }
   }, [coupon?.isUsed]);
 
   const handleSaveCoupon = async () => {
+  // user can not access their own created coupoon
+    if (isCreator) {
+      toast.error("You cannot redeem your own coupon");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -29,19 +39,13 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
         return;
       }
 
-        const payloadId = coupon?.couponId || coupon?._id;
-
-      const response = await axios.post(
-        `${API_BASE_URL}/api/coupons/save`,
-        { couponId: payloadId },
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, timeout: 5000 }
-      );
+      
    setSaveStatus("added")
    
     } catch (error) {
       console.error("Save error:", error);
       if (error.response?.status === 400 && error.response.data.message === "Coupon already saved") {
-        setSaveStatus("already")
+                   setSaveStatus("already")
      
       } else if (error.response?.status === 401) {
         localStorage.removeItem("token");
@@ -53,7 +57,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     }
   };
 
-  const handleDeleteCoupon = async () => {
+            const handleDeleteCoupon = async () => {
     if (!isCouponPage) return;
     try {
       const token = localStorage.getItem("token");
@@ -66,7 +70,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
       await axios.delete(`${API_BASE_URL}/api/coupons/saved/${savedId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+          // delete the coupon .
       onRemove?.(savedId);
     } catch (err) {
       console.error("Delete saved coupon err:", err);
@@ -74,7 +78,14 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     }
   };
 
-  const handleUseCoupon = () => setShowModal(true);
+  const handleUseCoupon = () => {
+    // Prevent creators from using their own coupons
+    if (isCreator) {
+      toast.error("You cannot redeem your own coupon");
+      return;
+    }
+    setShowModal(true);
+  };
 
   const closeAndMarkUsed = async () => {
     setShowModal(false);
@@ -83,6 +94,21 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     const idToMark = savedId || coupon?.couponId || coupon?._id;
     try {
       const token = localStorage.getItem("token");
+      
+      const couponId = coupon?.couponId || coupon?._id;
+      if (couponId) {
+        try {
+          await redeemCoupon(couponId);
+        } catch (redeemErr) {
+        
+          const status = redeemErr?.response?.status;
+          const msg = redeemErr?.response?.data?.message || 'Failed to redeem';
+          if (status) {
+            toast.warn(msg);
+          }
+        }
+      }
+
       await axios.put(`${API_BASE_URL}/api/coupons/saved/${idToMark}/use`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -94,7 +120,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     }
   };
 
-  const handleCopyCode = () => {
+  const handleCopyCode = () => {        // copy button at the save coupon page 
     try {
       navigator.clipboard.writeText(coupon?.code || coupon?.couponCode || "NOCODE");
       setCopied(true);
@@ -105,7 +131,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   };
 
   const handleImageError = () => setImageError(true);
-
+// if the coupon is unable to fetch from the database ..
   const title = coupon?.title || coupon?.name || "Special Offer";
   const description = coupon?.description || coupon?.desc || "Limited time offer";
   const code = coupon?.code || coupon?.couponCode || "NOCODE";
@@ -117,7 +143,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
 
   return (
     <>
-      <div className="relative bg-white rounded-xl shadow-md p-4 transition duration-300 h-full flex flex-col">
+      <div className="relative bg-purple-50 rounded-xl shadow-md p-4 transition duration-300 h-full flex flex-col">
         {isCouponPage && (
           <button
             onClick={handleDeleteCoupon}
@@ -130,7 +156,8 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
 
         <div className="relative">
           {image ? (
-            <img src={image} alt={title} onError={handleImageError} className={`w-full h-40 object-cover rounded-lg transition duration-300 ${isUsed ? "opacity-40" : "opacity-100"}`} />
+            <img src={image} alt={title} onError={handleImageError} className={`w-full h-40 object-cover rounded-lg transition duration-300 
+              ${isUsed ? "opacity-40" : "opacity-100"}`} />
           ) : (
             <div className={`w-full h-40 rounded-lg bg-gray-100 flex items-center justify-center ${isUsed ? "opacity-40" : "opacity-100"}`}>
               <span className="text-sm text-gray-400">No image</span>
@@ -149,38 +176,44 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
             ) : <span />}
 
             <span className="text-red-600 text-xs font-medium">Expires: {expiry ? new Date(expiry).toLocaleDateString() : "—"}</span>
-          </div>
-
-          {discountPercentage ? <div className="text-center mb-1"><span className="text-2xl font-bold text-green-600">{discountPercentage}% OFF</span></div> : null}
-          {minimumPurchase > 0 && <p className="text-xs text-gray-500 text-center mb-3">Min. purchase: ${minimumPurchase}</p>}
-
-          <div className="mt-auto">
-            {isCouponPage ? (!isUsed ?  
-            <button className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${user ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`} onClick={handleUseCoupon} disabled={!user}>Use Coupon</button> : 
+                    </div>
+          
+                    {discountPercentage ? <div className="text-center mb-1"><span className="text-2xl font-bold text-green-600">{discountPercentage}% OFF</span></div> : null}
+                    {minimumPurchase > 0 && <p className="text-xs text-gray-500 text-center mb-3">Min. purchase: ${minimumPurchase}</p>}
+          
+                    <div className="mt-auto">
+                      {isCouponPage ? (!isUsed ?  
+                      <button className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${!user || isCreator ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`} onClick={handleUseCoupon} disabled={!user || isCreator}>
+              {isCreator ? "Your Coupon" : "Use Coupon"}
+            </button> : 
 
 
 <div className="text-center text-sm font-semibold text-red-500">✅ Coupon Used</div>) : ( 
  <button
  className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${
    !user
-     ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-     : saveStatus === "added"
-     ? "bg-green-600 text-white"
-     : saveStatus === "already"
-     ? "bg-yellow-500 text-white"
-     : saveStatus === "error"
+          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+          : isCreator
+          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+          : saveStatus === "added"
+                 ? "bg-green-600 text-white"
+          : saveStatus === "already"
+                 ? "bg-yellow-500 text-white"
+          : saveStatus === "error"
      ? "bg-red-500 text-white"
      : "bg-blue-600 text-white hover:bg-blue-700"
  }`}
  onClick={handleSaveCoupon}
- disabled={!user || saveStatus === "added"}
+ disabled={!user || isCreator || saveStatus === "added"}
 >
- {saveStatus === "added"
+ {isCreator
+   ? "Your Coupon"
+   : saveStatus === "added"
    ? "Added ✅"
    : saveStatus === "already"
-   ? "Already Saved ⚠️"
+           ? "Already Saved ⚠️"
    : saveStatus === "error"
-   ? "Failed ❌"
+          ? "Failed ❌"
    : "Get Coupon"}
 </button>
 )}
@@ -191,14 +224,14 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
-            <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100" onClick={closeAndMarkUsed}><X className="w-5 h-5 text-gray-600" /></button>
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
-            <p className="text-sm text-gray-600 mb-4">{description}</p>
-            <div className="border rounded-xl p-4 text-center">
-              <div className="text-xs text-gray-500 mb-1">Your code</div>
-              <div className="font-mono text-2xl font-bold tracking-wider mb-3">{code}</div>
-              <button onClick={handleCopyCode} className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 ${copied ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}>
-                <Copy className="w-4 h-4" /> {copied ? "Copied ✅" : "Copy Code"}
+                  <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100" onClick={closeAndMarkUsed}><X className="w-5 h-5 text-gray-600" /></button>
+                  <h3 className="text-lg font-semibold mb-2">{title}</h3>
+                  <p className="text-sm text-gray-600 mb-4">{description}</p>
+                          <div className="border rounded-xl p-4 text-center">
+                    <div className="text-xs text-gray-500 mb-1">Your code</div>
+                    <div className="font-mono text-2xl font-bold tracking-wider mb-3">{code}</div>
+                    <button onClick={handleCopyCode} className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 ${copied ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}>
+                      <Copy className="w-4 h-4" /> {copied ? "Copied ✅" : "Copy Code"}
               </button>
               <div className="mt-3 text-xs text-gray-500">Show this code at checkout</div>
             </div>

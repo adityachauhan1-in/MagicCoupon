@@ -10,24 +10,25 @@ export const authMiddleware = async (req, res, next) => {
 
     const token = authHeader.replace('Bearer ', '');
 
-//verify the token
+            //verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-      algorithms: ['HS256'],
-      clockTolerance: 30
+              algorithms: ['HS256'],
+              clockTolerance: 30
     });
 
     if (!decoded?.userId) {
       return res.status(401).json({ success: false, message: 'Invalid token payload' });
     }
-
-    // Find user
-    const user = await User.findById(decoded.userId).select('_id');
+     
+         // Find user (include role)
+    const user = await User.findById(decoded.userId).select('_id role');
     if (!user) {
       return res.status(401).json({ success: false, message: 'User no longer exists' });
     }
 
-    req.userId = user._id;
-    next();
+         req.userId = user._id;
+    req.userRole = user.role;
+        next();
   } catch (error) {
     console.error('Auth error:', error.message);
     return res.status(401).json({ success: false, message: 'Not authorized' });

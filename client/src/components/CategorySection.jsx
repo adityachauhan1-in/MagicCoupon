@@ -1,7 +1,7 @@
 import { Utensils, Smartphone, Plane, ShoppingBag, HeartPulse, Clapperboard, Grid } from "lucide-react";
 import { useCoupons } from "../Context/CouponContext";
 
-const categories = [
+      const categories = [
   { name: "All", icon: <Grid className="w-5 h-5" /> },
   { name: "Food", icon: <Utensils className="w-5 h-5" /> },
   { name: "Electronics", icon: <Smartphone className="w-5 h-5" /> },

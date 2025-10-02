@@ -5,7 +5,7 @@ import { Banners } from "../components/Banner";
 import { CategorySection } from "../components/CategorySection";
 
 const Home = () => {
-  const { filteredCoupons, loading, error, searchInput, handleSearchChange } = useCoupons();
+  const { filteredCoupons, loading, error, searchInput, handleSearchChange, clearSearch } = useCoupons();
 
   if (loading) return <div className="flex justify-center items-center h-64 text-xl text-indigo-600">Loading amazing deals...</div>;
   if (error) return <div className="flex justify-center items-center h-64 text-red-600">{error}</div>;
@@ -21,8 +21,17 @@ const Home = () => {
             placeholder="Search coupons..."
             value={searchInput}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-2xl pl-10 pr-4 py-3 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-md transition-all duration-300 hover:shadow-lg"
+            className="w-full border border-gray-300 rounded-2xl pl-10 pr-12 py-3 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 shadow-md transition-all duration-300 hover:shadow-lg"
           />
+          {searchInput && (
+            <button
+              onClick={clearSearch}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+              title="Clear search"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
@@ -44,7 +53,7 @@ const Home = () => {
           <div className="text-center p-10 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold text-gray-700 mb-4">No coupons found 😢</h2>
             <p className="text-gray-500 mb-6">Try searching for other categories or check back later for new deals!</p>
-            <button
+                <button
               onClick={() => handleSearchChange("")}
               className="bg-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition duration-300"
             >

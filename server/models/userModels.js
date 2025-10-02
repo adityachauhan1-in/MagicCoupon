@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+      
         trim: true
     },
     email: {
@@ -16,19 +16,29 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true
     },
-    password: {
-        type: String,
-        required: true,
-        minlength: 6
-    },
-    walletBalance: {
-        type: Number,
-        default:1000
-    },
+        password: {
+            type: String,
+        
+            
+        },
+        googleId: {
+            type: String,
+        
+           unique: true
+        },
+   avatar: {
+    type: String,
+    default: 'https://via.placeholder.com/150'
+   },
     savedCoupons: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Coupon'
-    }] 
+    }],
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    } 
 
   
 },{ timestamps: true}

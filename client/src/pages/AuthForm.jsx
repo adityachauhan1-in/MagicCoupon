@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+    import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import { ClipLoader } from "react-spinners";
-import { Eye, EyeOff } from "lucide-react";
+         import PasswordInput from "../components/PassWordInput";
+import { login as apiLogin, signup as apiSignup } from "../services/api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -18,10 +21,21 @@ const AuthForm = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+ 
+  };
+
+
+
+  const clearForm = () => {
+    setFormData({ name: "", email: "", password: "" });
+    setError("");
+    setPasswordStrength(0);
   };
 
   const handleSubmit = async (e) => {
@@ -29,31 +43,41 @@ const AuthForm = () => {
     setError("");
     setIsLoading(true);
 
+    // validation          user needs to fill all details 
     if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
       setError("Please fill in all fields");
       setIsLoading(false);
       return;
     }
 
-    try {
-      const endpoint = isLogin ? "login" : "signup";
-      const res = await axios.post(
-        `http://localhost:5000/auth/${endpoint}`,
-        formData,
-        { timeout: 10000, headers: { "Content-Type": "application/json" } }
-      );
+    // Email validation    email is converted or formatted 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      setIsLoading(false);
+      return;
+    }
 
-      if (res.data.success) {
-        login(res.data.user, res.data.token);
-        toast.success(isLogin ? "Login successful ✅" : "Signup successful ✅");
+    // Password validation for signup
+    if (!isLogin && formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const res = isLogin ? await apiLogin(formData) : await apiSignup(formData);
+      if (res?.success) {
+        login(res.user, res.token);
+               toast.success(isLogin ? "Login successful ✅" : "Signup successful ✅");
         navigate("/");
       } else {
-        throw new Error(res.data.message || "Authentication failed");
+        throw new Error(res?.message || "Authentication failed");
       }
     } catch (err) {
       const errorMessage =
         err.response?.data?.message ||
-        err.message ||
+                  err.message ||
         (err.code === "ECONNABORTED" ? "Request timed out" : "Authentication failed");
       setError(errorMessage);
       toast.error(errorMessage);
@@ -63,17 +87,35 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Banner */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-12 text-center shadow-lg">
-        <h1 className="text-5xl font-extrabold mb-2 tracking-tight">MagicCoupon</h1>
-        <p className="text-xl md:text-2xl">Get amazing discounts instantly!</p>
+    <div className=" h-60 flex flex-col">
+                 {/* Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-8 text-center shadow-lg">
+        <h1 className="text-5xl font-extrabold mb-3 tracking-tight">MagicCoupon</h1>
+                <p className="text-xl md:text-2xl">Get amazing discounts instantly!</p>
       </div>
 
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-50 p-4">
         <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md relative overflow-hidden">
-          {/* Decorative Circles */}
+
+
+
+          {/* Google OAuth Button */}
+          <div className="mb-6">
+            {/* import Oauth from context  */}
+          <a href={`${API_BASE_URL}/auth/google`} className="block">      
+              <button className="w-full bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition duration-300 flex items-center justify-center gap-3 shadow-sm">
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continue with Google
+              </button>
+            </a>
+          </div>
+          
           <div className="absolute -top-16 -left-16 w-40 h-40 bg-purple-200 rounded-full opacity-30"></div>
           <div className="absolute -bottom-20 -right-16 w-60 h-60 bg-indigo-200 rounded-full opacity-30"></div>
 
@@ -104,24 +146,12 @@ const AuthForm = () => {
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none transition placeholder-gray-400"
             />
 
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none transition placeholder-gray-400 pr-12"
-              />
-              <span
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-indigo-600 transition"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </span>
-            </div>
+          
+                 <PasswordInput 
+                 onChange={handleChange}
+                 value={formData.password}
+                 isLogin={isLogin}/>
+          
 
             {error && (
               <p className="text-sm text-red-600 font-semibold text-center animate-pulse">
@@ -143,7 +173,7 @@ const AuthForm = () => {
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
-                setError("");
+                          clearForm();
               }}
               className="text-indigo-600 font-semibold hover:underline transition"
             >

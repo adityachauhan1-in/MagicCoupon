@@ -5,7 +5,7 @@ const CouponContext = createContext();
 
 export const useCoupons = () => useContext(CouponContext);
 
-export const CouponProvider = ({ children }) => {
+export const CouponProvider = ({ children }) => { // all coupons route 
   const [myCoupons, setMyCoupons] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [filteredCoupons, setFilteredCoupons] = useState([]);
@@ -22,15 +22,15 @@ export const CouponProvider = ({ children }) => {
     }
   }, []);
 
-  const addCoupon = (coupon) => {
+            const addCoupon = (coupon) => {
     const updated = [...myCoupons, coupon];
     setMyCoupons(updated);
-    localStorage.setItem("myCoupons", JSON.stringify(updated));
+           localStorage.setItem("myCoupons", JSON.stringify(updated));
   };
 
   const removeCoupon = (code) => {
     const updated = myCoupons.filter((c) => c.code !== code);
-    setMyCoupons(updated);
+          setMyCoupons(updated);
     localStorage.setItem("myCoupons", JSON.stringify(updated));
   };
 
@@ -39,15 +39,15 @@ export const CouponProvider = ({ children }) => {
       try {
         setLoading(true);
         let url =
-          selectedCategory === "All"
+                      selectedCategory === "All"
             ? `${API_BASE_URL}/coupons`
             : `${API_BASE_URL}/coupons/category/${selectedCategory}`;
         const response = await fetch(url);
-        const data = await response.json();
+                  const data = await response.json();
 
-        if (data.success) {
-          setCoupons(data.data);
-          setFilteredCoupons(data.data);
+                    if (data.success) {
+                      setCoupons(data.data);
+                      setFilteredCoupons(data.data);
         } else {
           setError(data.message || "Failed to fetch coupons");
         }
@@ -81,6 +81,12 @@ export const CouponProvider = ({ children }) => {
     }
   };
 
+  
+  const clearSearch = () => {
+    setSearchInput("");
+    setFilteredCoupons(coupons);
+  };
+
   return (
     <CouponContext.Provider 
     value={{ myCoupons, addCoupon, removeCoupon,
@@ -92,6 +98,7 @@ export const CouponProvider = ({ children }) => {
         selectedCategory,
         setSelectedCategory,
         handleSearchChange,
+        clearSearch,
      }}>
       {children}
     </CouponContext.Provider>

@@ -13,6 +13,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './Context/AuthContext';
 import { ErrorPage } from './components/ErrorPage';
 import { CouponProvider } from './Context/CouponContext';
+import AuthSuccess from './components/AuthSuccess';
+import MyCreated from './pages/MyCreated';
 
 const App = () => {
   return (
@@ -21,12 +23,14 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/auth" element={<AuthForm />} />
+          <Route path='/auth/success' element={<AuthSuccess/>}/>
           <Route element={<>
             <Navbar />
             <ProtectedRoute />
           </>}>
             <Route path="/" element={<Home />} />
             <Route path="/coupons" element={<Coupons />} />
+            <Route path="/my-created" element={<MyCreated />} />
           </Route>
           <Route path="/FeedbackSupport" element={<>
             <Navbar />

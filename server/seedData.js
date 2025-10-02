@@ -1,15 +1,17 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Coupon from './models/couponModels.js';
+import User from './models/userModels.js';
 
 dotenv.config();
 
+// Base coupons (dates and creatorId will be assigned programmatically)
 const sampleCoupons = [
   {
     title: "50% Off Pizza",
     store: "Pizza Hut",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
  
     price:20,
     image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",
@@ -23,8 +25,8 @@ const sampleCoupons = [
   {
     title: "20% Off Electronics",
     store: "Best Buy",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
 
     price:20,
     image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400",
@@ -38,8 +40,8 @@ const sampleCoupons = [
   {
     title: "Buy 1 Get 1 Free Coffee",
     store: "Starbucks",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
   
     price:20,
     image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
@@ -53,8 +55,8 @@ const sampleCoupons = [
   {
     title: "30% Off Fashion",
     store: "Zara",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400",
     category: "Fashion",
@@ -67,8 +69,8 @@ const sampleCoupons = [
   {
     title: "15% Off Groceries",
     store: "Walmart",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400",
     category: "Other",
@@ -81,8 +83,8 @@ const sampleCoupons = [
   {
     title: "Free Dessert with Dinner",
     store: "Olive Garden",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
 
     price:20,
     image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400",
@@ -96,8 +98,8 @@ const sampleCoupons = [
   {
     title: "25% Off Travel Packages",
     store: "Expedia",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400",
     category: "Travel",
@@ -110,8 +112,8 @@ const sampleCoupons = [
   {
     title: "30% Off Health Supplements",
     store: "GNC",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
     category: "Health",
@@ -124,8 +126,8 @@ const sampleCoupons = [
   {
     title: "40% Off Online Courses",
     store: "Udemy",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400",
     category: "Education",
@@ -138,8 +140,8 @@ const sampleCoupons = [
   {
     title: "50% Off Movie Tickets",
     store: "AMC Theaters",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400",
     category: "Entertainment",
@@ -152,8 +154,8 @@ const sampleCoupons = [
   {
     title: "25% Off Gaming Consoles",
     store: "GameStop",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400",
     category: "Electronics",
@@ -166,8 +168,8 @@ const sampleCoupons = [
   {
     title: "Buy 2 Get 1 Free Books",
     store: "Barnes & Noble",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400",
     category: "Education",
@@ -180,8 +182,8 @@ const sampleCoupons = [
   {
     title: "30% Off Fitness Equipment",
     store: "Dick's Sporting Goods",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
     category: "Health",
@@ -194,8 +196,8 @@ const sampleCoupons = [
   {
     title: "20% Off Home Decor",
     store: "IKEA",
-    startDate: "2025-01-01",
-     endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
     category: "Other",
@@ -334,8 +336,8 @@ const sampleCoupons = [
   {
     title: "25% Off Hotel Bookings",
     store: "Marriott",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400",
     category: "Travel",
@@ -348,8 +350,8 @@ const sampleCoupons = [
   {
     title: "Buy 1 Get 1 Free Pizza",
     store: "Domino's",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
  
     price:20,
     image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",
@@ -363,8 +365,8 @@ const sampleCoupons = [
   {
     title: "30% Off Smartphones",
     store: "Verizon",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
     category: "Electronics",
@@ -377,8 +379,8 @@ const sampleCoupons = [
   {
     title: "20% Off Yoga Classes",
     store: "CorePower Yoga",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
     category: "Health",
@@ -392,8 +394,8 @@ const sampleCoupons = [
   {
     title: "99% Off Beach Tickets",
     store: "Bahchaula",
-    startDate: "2025-01-01",
-      endDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+    startDate: new Date(),
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     price:20,
     image: "https://imgs.search.brave.com/s-C_AYX0hNeFZtP9pk2WplVxIV7_PShkHndi8yQklw8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Z2Fqd2xhY3NlYW4u/Y29tL2NvbnRlbnQv/dXBsb2Fkcy8yMDE2/LzAyL2FsdHVzYmFk/cmVxdWlja19pY29u/XzIzNjB4MjM2MC5w/bmc",
     category: "Entertainment",
@@ -411,11 +413,73 @@ const seedDatabase = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
+    // Ensure an admin user exists
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
+    const admin = await User.findOneAndUpdate(
+      { email: adminEmail },
+      { name: 'Seed Admin', password: 'Admin#123', role: 'admin' },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
     // Clear existing coupons
     await Coupon.deleteMany({});
     console.log('Cleared existing coupons');
 
-    const insertedCoupons = await Coupon.insertMany(sampleCoupons);
+    // Assign creatorId and normalize dates for all coupons
+    const now = new Date();
+    const future = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+    const couponsToInsert = sampleCoupons.map(c => ({
+      ...c,
+      creatorId: admin._id,
+      // Force normalized dates for all coupons
+      startDate: now,
+      endDate: future,
+      isActive: true,
+      usedCount: 0,
+      usageLimit: typeof c.usageLimit === 'number' ? c.usageLimit : -1
+    }));
+
+    // Add some extra coupons
+    const extraCoupons = [
+      {
+        title: "10% Off Backpacks",
+        store: "North Face",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400",
+        category: "Fashion",
+        minimumPurchase: 40,
+        discountAmount: 4,
+        discountPercentage: 10,
+        description: "Gear up with 10% off backpacks.",
+        code: "PACK10"
+      },
+      {
+        title: "15% Off Laptops",
+        store: "Dell",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400",
+        category: "Electronics",
+        minimumPurchase: 500,
+        discountAmount: 75,
+        discountPercentage: 15,
+        description: "Save on select laptop models.",
+        code: "LAPTOP15"
+      },
+      {
+        title: "20% Off Running Shoes",
+        store: "Nike",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1528702748617-c64d49f918af?w=400",
+        category: "Fashion",
+        minimumPurchase: 80,
+        discountAmount: 16,
+        discountPercentage: 20,
+        description: "Run further with 20% off.",
+        code: "RUN20"
+      }
+    ].map(c => ({ ...c, creatorId: admin._id, startDate: now, endDate: future, isActive: true, usedCount: 0, usageLimit: -1 }));
+
+    const insertedCoupons = await Coupon.insertMany([...couponsToInsert, ...extraCoupons]);
     console.log(`Successfully added ${insertedCoupons.length} coupons to the database`);
 
     // Close connection

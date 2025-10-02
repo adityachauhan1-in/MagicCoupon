@@ -30,7 +30,7 @@ const couponSchema = new mongoose.Schema({
     code: {
         type: String,
         required: true,
-        // unique: true,
+        unique: true,
         uppercase: true,
         trim: true
     },
@@ -57,7 +57,7 @@ const couponSchema = new mongoose.Schema({
     },
     usageLimit: {
         type: Number,
-        default: -1 // -1 means unlimited
+        default: -1 
     },
     usedCount: {
         type: Number,
@@ -89,10 +89,28 @@ const couponSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       }], 
+      creatorId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' 
+      }
     },
     {
     timestamps: true }
 );
+
+
+                  couponSchema.pre('save', function(next) {
+           if (this.startDate && this.endDate && this.startDate > this.endDate) {
+               return next(new Error('startDate must be before or equal to endDate'));
+               }
+               if (typeof this.usageLimit === 'number' && this.usageLimit < -1) {
+                   return next(new Error('usageLimit must be -1 or greater'));
+               }
+        if (typeof this.usedCount === 'number' && this.usedCount < 0) {
+            return next(new Error('usedCount cannot be negative'));
+        }
+    next();
+});
 
 couponSchema.index({ category: 1, isActive: 1 });
 couponSchema.index({ code: 1 });
