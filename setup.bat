@@ -32,9 +32,9 @@ echo ========================================
 echo Setup Complete!
 echo ========================================
 echo.
-echo Frontend: http://localhost:3000
-echo Backend:  http://localhost:5000
-echo MongoDB:  localhost:27017
+echo Frontend: https://magiccoupon-frontend.onrender.com
+echo Backend:  https://magiccoupon-backend.onrender.com
+echo MongoDB:  localhost:27017 (local development only)
 echo.
 echo Useful commands:
 echo   View logs: docker-compose logs

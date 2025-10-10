@@ -13,7 +13,7 @@ export const CouponProvider = ({ children }) => { // all coupons route
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com/api";
 
   useEffect(() => {
     const stored = localStorage.getItem("myCoupons");

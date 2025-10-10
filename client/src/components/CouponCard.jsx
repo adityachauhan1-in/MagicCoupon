@@ -5,14 +5,14 @@ import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 import { X, Trash2, Copy } from "lucide-react";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com";
 
 const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   const { user } = useAuth();
 
              const savedId = coupon?._id;
   const [isUsed, setIsUsed] = useState(Boolean(coupon?.isUsed));
-        const [showModal, setShowModal] = useState(false);
+         const [showModal, setShowModal] = useState(false);
             const [copied, setCopied] = useState(false);
  const [imageError, setImageError] = useState(false);
     const [saveStatus,setSaveStatus] = useState("default")

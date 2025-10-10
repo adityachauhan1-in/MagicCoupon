@@ -26,7 +26,7 @@ JWT_SECRET=your_secure_jwt_secret_here
 # Google OAuth (if using)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/auth/google/callback
+GOOGLE_CALLBACK_URL=https://magiccoupon-backend.onrender.com/auth/google/callback
 ```
 
 ### 3. Run with Docker Compose
@@ -39,9 +39,9 @@ docker-compose up -d --build
 ```
 
 ### 4. Access the Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
-- **MongoDB**: localhost:27017
+- **Frontend**: https://magiccoupon-frontend.onrender.com
+- **Backend API**: https://magiccoupon-backend.onrender.com
+- **MongoDB**: localhost:27017 (local development only)
 
 ## 🐳 Docker Commands
 

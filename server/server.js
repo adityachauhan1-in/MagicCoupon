@@ -22,7 +22,14 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import passport from "passport"
 const app = express();
-    app.use(cors());
+    app.use(cors({
+        origin: [
+            'https://magiccoupon-frontend.onrender.com',
+            'http://localhost:3000', // For local development
+            process.env.CLIENT_URL
+        ].filter(Boolean),
+        credentials: true
+    }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
     connectDB();
