@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_ROOT = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com" ;
+const API_ROOT = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
 
 export const api = axios.create({ baseURL: API_ROOT });
 

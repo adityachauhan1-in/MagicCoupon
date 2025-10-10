@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 import { X, Trash2, Copy } from "lucide-react";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com";
+const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
 
 const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   const { user } = useAuth();

@@ -5,7 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 import CouponCard from "../components/CouponCard";
 import { useCoupons } from "../Context/CouponContext";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com";
+const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
 
 const Coupons = () => {
   const { searchInput, handleSearchChange, clearSearch } = useCoupons();
