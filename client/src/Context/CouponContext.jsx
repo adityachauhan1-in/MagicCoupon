@@ -13,7 +13,7 @@ export const CouponProvider = ({ children }) => { // all coupons route
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com/api";
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com";
 
   useEffect(() => {
     const stored = localStorage.getItem("myCoupons");
@@ -40,8 +40,8 @@ export const CouponProvider = ({ children }) => { // all coupons route
         setLoading(true);
         let url =
                       selectedCategory === "All"
-            ? `${API_BASE_URL}/coupons`
-            : `${API_BASE_URL}/coupons/category/${selectedCategory}`;
+            ? `${API_BASE_URL}/api/coupons`
+            : `${API_BASE_URL}/api/coupons/category/${selectedCategory}`;
         const response = await fetch(url);
                   const data = await response.json();
 
@@ -68,7 +68,7 @@ export const CouponProvider = ({ children }) => { // all coupons route
     } else {
       try {
         
-        const response = await axios.get(`${API_BASE_URL}/coupons/search`, {
+        const response = await axios.get(`${API_BASE_URL}/api/coupons/search`, {
           params: { q: value }
         });
          if(response.data.success){
