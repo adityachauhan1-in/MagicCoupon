@@ -2,6 +2,12 @@
 
 A coupon management application with authentication and user management.
 
+## 🌐 Live Application
+
+**Production URLs:**
+- **Frontend**: https://magiccouponfrontend.onrender.com
+- **Backend API**: https://magiccoupon-backend.onrender.com
+
 ## 🚀 Quick Start with Docker
 
 ### Prerequisites
@@ -27,6 +33,7 @@ JWT_SECRET=your_secure_jwt_secret_here
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=https://magiccoupon-backend.onrender.com/auth/google/callback
+CLIENT_URL=https://magiccouponfrontend.onrender.com
 ```
 
 ### 3. Run with Docker Compose
@@ -39,7 +46,7 @@ docker-compose up -d --build
 ```
 
 ### 4. Access the Application
-- **Frontend**: https://magiccoupon-frontend.onrender.com
+- **Frontend**: https://magiccouponfrontend.onrender.com
 - **Backend API**: https://magiccoupon-backend.onrender.com
 - **MongoDB**: localhost:27017 (local development only)
 

@@ -46,7 +46,7 @@ app.use(passport.initialize());
 app.use("/auth", authRoutes);          
 
         app.get("/", (req, res) => {
-  res.send("Hello World ");
+  res.send("This is the server of the MagicCoupon Web Application");
 }); 
 
 const PORT = process.env.PORT || 5000;
