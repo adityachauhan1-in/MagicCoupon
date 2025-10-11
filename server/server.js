@@ -25,10 +25,13 @@ const app = express();
     app.use(cors({
         origin: [
             'https://magiccouponfrontend.onrender.com',
+            'https://magiccoupon-frontend.onrender.com', // Alternative URL format
             'http://localhost:3000', // For local development
             process.env.CLIENT_URL
         ].filter(Boolean),
-        credentials: true
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
     }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

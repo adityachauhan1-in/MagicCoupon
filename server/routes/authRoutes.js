@@ -24,7 +24,7 @@
     passport.authenticate("google", { failureRedirect: "/login" , session:false}),
     (req, res) => {
       const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-      const clientUrl = process.env.CLIENT_URL || "https://magiccoupon-frontend.onrender.com";
+      const clientUrl = process.env.CLIENT_URL || "https://magiccouponfrontend.onrender.com";
       res.redirect(`${clientUrl}/auth/success?token=${token}`);
     }
   );
