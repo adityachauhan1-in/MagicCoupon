@@ -25,7 +25,7 @@ const app = express();
     app.use(cors({
         origin: [
             'https://magiccouponfrontend.onrender.com',
-            'https://magiccoupon-frontend.onrender.com', // Alternative URL format
+            // Alternative URL format
             'http://localhost:3000', // For local development
             process.env.CLIENT_URL
         ].filter(Boolean),

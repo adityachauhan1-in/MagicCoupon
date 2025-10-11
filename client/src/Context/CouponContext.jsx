@@ -15,9 +15,6 @@ export const CouponProvider = ({ children }) => { // all coupons route
   const [selectedCategory, setSelectedCategory] = useState("All");
   const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
   
-  // Debug: Log the API_BASE_URL to see what's being used
-  console.log('API_BASE_URL:', API_BASE_URL);
-  console.log('process.env.REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
 
   useEffect(() => {
     const stored = localStorage.getItem("myCoupons");
