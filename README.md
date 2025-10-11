@@ -151,3 +151,14 @@ docker-compose -f docker-compose.dev.yml up
 - Google OAuth is configured but optional
 - All services restart automatically unless stopped manually
 - Health checks are implemented for better monitoring
+
+## ⚠️ Console Warnings (Normal)
+If you see console warnings like:
+- `WARNING! Using this console may allow attackers to impersonate you...`
+- `ERR_BLOCKED_BY_CLIENT` errors from `play.google.com`
+
+**These are completely normal and expected:**
+- The first warning is Google's security message about browser console usage
+- The second error occurs when ad blockers block Google's tracking requests
+- **Neither affects your app's functionality**
+- **Both can be safely ignored**

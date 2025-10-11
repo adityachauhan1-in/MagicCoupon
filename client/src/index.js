@@ -5,6 +5,10 @@ import App from './App';
 // import reportWebVitals from './reportWebVitals';
 // import { CouponProvider } from './Context/CouponContext';
 
+// Note: Console warnings about "Self-XSS" and "ERR_BLOCKED_BY_CLIENT" are normal.
+// These are Google's security warnings and ad blocker messages, not app errors.
+// They don't affect functionality and can be safely ignored.
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

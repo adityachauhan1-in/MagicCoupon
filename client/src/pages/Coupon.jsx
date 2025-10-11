@@ -35,7 +35,7 @@ const Coupons = () => {
         if (res.data?.success) setSavedCoupons(res.data.data || []);
         else toast.error(res.data?.message || "Failed to load saved coupons");
       } catch (err) {
-        console.error("fetchSavedCoupons err:", err);
+        // Error handled by user-friendly message display
         toast.error(err.response?.data?.message || "Failed to load saved coupons");
       } finally {
         setLoading(false);

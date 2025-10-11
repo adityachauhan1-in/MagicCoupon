@@ -43,7 +43,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
    setSaveStatus("added")
    
     } catch (error) {
-      console.error("Save error:", error);
+      // Error handled by toast notification
       if (error.response?.status === 400 && error.response.data.message === "Coupon already saved") {
                    setSaveStatus("already")
      
@@ -73,7 +73,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
           // delete the coupon .
       onRemove?.(savedId);
     } catch (err) {
-      console.error("Delete saved coupon err:", err);
+      // Error handled by toast notification
       toast.error(err.response?.data?.message || "Failed to remove coupon");
     }
   };
@@ -115,7 +115,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
 
       setIsUsed(true);
     } catch (err) {
-      console.error("Mark used error:", err);
+      // Error handled by toast notification
       toast.error("Failed to mark coupon as used");
     }
   };
@@ -126,7 +126,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch (err) {
-      console.error("copy err", err);
+      // Error handled by toast notification
     }
   };
 

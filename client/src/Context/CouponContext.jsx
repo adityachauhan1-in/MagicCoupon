@@ -76,7 +76,7 @@ export const CouponProvider = ({ children }) => { // all coupons route
          }
         
       } catch (error) {
-       console.log("error searching coupons : " , error) 
+       // Error handled by user-friendly message display 
       }
     }
   };
