@@ -12,22 +12,33 @@
 
   const router = express.Router();
 
-  // Google OAuth start
-  router.get(
-    "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
+  // Google OAuth start (only if configured)
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    router.get(
+      "/google",
+      passport.authenticate("google", { scope: ["profile", "email"] })
+    );
 
-  // Google OAuth callback
-  router.get(
-    "/google/callback",
-    passport.authenticate("google", { failureRedirect: "/login" , session:false}),
-    (req, res) => {
-      const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-      const clientUrl = process.env.CLIENT_URL || "https://magiccouponfrontend.onrender.com";
-      res.redirect(`${clientUrl}/auth/success?token=${token}`);
-    }
-  );
+    // Google OAuth callback
+    router.get(
+      "/google/callback",
+      passport.authenticate("google", { failureRedirect: "/login" , session:false}),
+      (req, res) => {
+        const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const clientUrl = process.env.CLIENT_URL || "https://magiccouponfrontend.onrender.com";
+        res.redirect(`${clientUrl}/auth/success?token=${token}`);
+      }
+    );
+  } else {
+    // Fallback routes when Google OAuth is not configured
+    router.get("/google", (req, res) => {
+      res.status(501).json({ message: "Google OAuth not configured" });
+    });
+    
+    router.get("/google/callback", (req, res) => {
+      res.status(501).json({ message: "Google OAuth not configured" });
+    });
+  }
 
   // Normal signup/login
   router.post("/signup", register);

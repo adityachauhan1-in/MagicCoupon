@@ -42,30 +42,23 @@ router.get("/category/:category", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.get("/:id", getCouponById); // Public route to get coupon by ID
 
-
-
-
+// Protected routes (require authentication)
 router.use(authMiddleware);
 
-
 router.post("/save", saveCoupon);
-
 router.get("/saved/list", getSavedCoupons);
-
 router.delete("/saved/:couponId", removeCoupon);
-
 router.put("/saved/:couponId/use", markSavedCouponUsed);
 
-//for admin
-router.post("/", createCoupon);// above is the get request , this one is POST  to create 
+//for admin and authenticated users
+router.post("/", createCoupon); // Create coupon (auth required)
 router.get("/user/search", searchUserCoupons);
 router.put("/:id", updateCoupon);
 router.delete("/:id", deleteCoupon);
-router.get("/my-create",authMiddleware,getMyCreatedCoupons);
-router.get("/:id", getCouponById);
-
-router.post("/redeem/:id",authMiddleware,redeemCoupon)
+router.get("/my-create", getMyCreatedCoupons); // Removed duplicate authMiddleware
+router.post("/redeem/:id", redeemCoupon) // Removed duplicate authMiddleware
 
 export default router;
  

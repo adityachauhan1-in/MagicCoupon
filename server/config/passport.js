@@ -18,41 +18,42 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 
-passport.use(
+// Only configure Google OAuth if credentials are provided
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://magiccoupon-backend.onrender.com/auth/google/callback",
+      },
+      async (accessToken, refreshToken, profile, cb) => {
+        try {
+          // check if user already exists
+          let user = await User.findOne({ googleId: profile.id });
 
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://magiccoupon-backend.onrender.com/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, cb) => {
-      try {
+          if (!user) {
+            // if not, create a new user
+            user = await User.create({
+              googleId: profile.id,
+              name: profile.displayName,
+              email: profile.emails[0].value,
+              avatar: profile.photos[0].value,
+            });
+          }
 
-  // Google strategy registered
-
-        // check if user already exists
-        let user = await User.findOne({ googleId: profile.id });
-
-        if (!user) {
-          // if not, create a new user
-          user = await User.create({
-            googleId: profile.id,
-            name: profile.displayName,
-            email: profile.emails[0].value,
-            avatar: profile.photos[0].value,
-          });
+          // pass user to passport
+          return cb(null, user);
+        } catch (error) {
+          return cb(error, null);
         }
-
-        // pass user to passport
-        return cb(null, user);
-      } catch (error) {
-        return cb(error, null);
       }
-    }
-  )
-  
-);
+    )
+  );
+  console.log("Google OAuth strategy configured");
+} else {
+  console.log("Google OAuth credentials not found - OAuth disabled");
+}
 
 
 
