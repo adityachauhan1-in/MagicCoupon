@@ -19,7 +19,7 @@
       passport.authenticate("google", { scope: ["profile", "email"] })
     );
 
-    // Google OAuth callback
+    // Google OAuth callback 
     router.get(
       "/google/callback",
       passport.authenticate("google", { failureRedirect: "/login" , session:false}),

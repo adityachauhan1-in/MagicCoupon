@@ -25,7 +25,7 @@ export const getCouponById = (id) => api.get(`/api/coupons/${id}`).then(r => r.d
 export const getCouponsByCategory = (category) => api.get(`/api/coupons/category/${encodeURIComponent(category)}`).then(r => r.data);
 export const getCategoriesList = () => api.get(`/api/coupons/categories/list`).then(r => r.data);
 
-// Coupons (auth)
+// Coupons (auth) 
 export const createCoupon = (payload) => api.post(`/api/coupons`, payload).then(r => r.data);
 export const updateCoupon = (id, payload) => api.put(`/api/coupons/${id}`, payload).then(r => r.data);
 export const deleteCoupon = (id) => api.delete(`/api/coupons/${id}`).then(r => r.data);

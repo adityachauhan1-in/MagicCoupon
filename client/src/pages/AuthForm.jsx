@@ -6,7 +6,7 @@ import { useAuth } from "../Context/AuthContext";
 import { ClipLoader } from "react-spinners";
          import PasswordInput from "../components/PassWordInput";
 import { login as apiLogin, signup as apiSignup } from "../services/api";
-
+ 
 const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
 
 const AuthForm = () => {

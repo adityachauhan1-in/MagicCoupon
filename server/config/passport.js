@@ -30,7 +30,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
   console.log("✅ Google OAuth strategy configured");
 } else {
-  console.log("❌ Google OAuth credentials not found - OAuth disabled");
+  console.log("❌ Google OAuth credentials not found - OAuth disabled ");
 }
 
 export default passport;
