@@ -37,3 +37,4 @@ export const saveCoupon = (couponId) => api.post(`/api/coupons/save`, { couponId
 export const getSavedCoupons = () => api.get(`/api/coupons/saved/list`).then(r => r.data);
 export const removeSavedCoupon = (couponOrSavedId) => api.delete(`/api/coupons/saved/${couponOrSavedId}`).then(r => r.data);
 export const markSavedCouponUsed = (couponOrSavedId) => api.put(`/api/coupons/saved/${couponOrSavedId}/use`).then(r => r.data);
+ 
