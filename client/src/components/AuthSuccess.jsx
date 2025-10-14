@@ -21,7 +21,7 @@ export default function AuthSuccess(){
         .then((data) => {
           if (data?.success && data?.data) {
             login(data.data, token);
-            navigate("/");
+            window.location.href = "/"; 
           } else {
             navigate("/auth");
           }
