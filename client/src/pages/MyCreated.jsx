@@ -301,7 +301,13 @@ const MyCreated = () => {
     setShowDeleteModal(false);
     setCouponToDelete(null);
   };
-
+  useEffect(() => {
+    if (user) {
+      console.log("Loading my created coupons...");
+      load();
+    }
+  }, [user]);
+  
   const clearImage = () => {
     setForm((f) => ({ ...f, image: "" }));
     setErrors((prev) => ({ ...prev, image: "" }));
@@ -311,6 +317,7 @@ const MyCreated = () => {
   };
 
   return (
+    console.log("error is " , errors),
     <div className="min-h-screen bg-gray-50 pt-20 pb-10">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

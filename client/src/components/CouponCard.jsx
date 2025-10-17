@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { redeemCoupon } from "../services/api";
+import { redeemCoupon, saveCoupon as saveCouponApi } from "../services/api";
 import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 import { X, Trash2, Copy } from "lucide-react";
@@ -35,12 +35,28 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
+        toast.error("Please login to save coupons");
         setSaveStatus("error")
         return;
       }
 
-      
-   setSaveStatus("added")
+      const couponId = coupon?.couponId || coupon?._id;
+      if (!couponId) {
+        setSaveStatus("error");
+        toast.error("Invalid coupon");
+        return;
+      }
+
+      const res = await saveCouponApi(couponId);
+      const msg = res?.message || "";
+      if (res?.success) {
+        setSaveStatus("added");
+      } else if (msg === "Coupon already saved") {
+        setSaveStatus("already");
+      } else {
+        setSaveStatus("error");
+        if (msg) toast.warn(msg);
+      }
    
     } catch (error) {
       // Error handled by toast notification
@@ -52,6 +68,8 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
         toast.error("Session expired. Please login again");
       } else {
         setSaveStatus("error")
+        const msg = error.response?.data?.message || "Failed to save coupon";
+        toast.error(msg);
       }
       setTimeout(() => setSaveStatus("default"),2000)
     }

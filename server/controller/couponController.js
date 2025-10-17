@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 // Get all coupons 
 export const getAllCoupons = async (req, res) => {
   try {
+    console.log("we are at getAllCoupons");
     const coupons = await Coupon.find();
     res.json({ success: true, data: coupons });
   } catch (error) {
@@ -16,8 +17,9 @@ export const getAllCoupons = async (req, res) => {
 // Get coupon by ID for particular selected coupon ..
 export const getCouponById = async (req, res) => {
   try {
+    console.log("🔍 getCouponById called with id:", req.params.id);
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ message: "Invalid coupon  ID format" });
+      return res.status(400).json({ message: "Invalid coupon  ID format dil legi " });
     }
     const coupon = await Coupon.findById(req.params.id);
     if (!coupon) return res.status(404).json({ message: "Coupon not found" });
@@ -306,7 +308,10 @@ export const markSavedCouponUsed = async (req, res) => {
 
           // get my created coupons
 export const getMyCreatedCoupons = async (req, res) => {
+  console.log("hitt getMy creted coupons ")
         try {
+          console.log("we are at getMyCreatedCoupons");
+          console.log("req.userId is " + req.userId);
     const coupons = await Coupon.find({ creatorId: req.userId });
       res.json({ success: true, data: coupons });
   } catch (error) {

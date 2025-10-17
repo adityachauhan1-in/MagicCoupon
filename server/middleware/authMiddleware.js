@@ -2,8 +2,13 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModels.js';
 
 export const authMiddleware = async (req, res, next) => {
+  console.log("🔥 authMiddleware triggered for:", req.method, req.originalUrl);
+  console.log("JWT_SECRET is", process.env.JWT_SECRET);
+
   try {
+    console.log("we are at authMiddleware");
     const authHeader = req.header('Authorization');
+    console.log("authHeader is " + authHeader);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ success: false, message: 'Authorization token missing' });
     }
@@ -15,7 +20,7 @@ export const authMiddleware = async (req, res, next) => {
               algorithms: ['HS256'],
               clockTolerance: 30
     });
-
+console.log('decoded is ' + decoded)
     if (!decoded?.userId) {
       return res.status(401).json({ success: false, message: 'Invalid token payload' });
     }

@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
-//it connect your backend with your mongo database
-const connectDB = async () => { 
+
+const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-    
+    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error("MongoDB connection error:", error);
-    process.exit(1); 
+    console.error("❌ MongoDB connection error:", error.message);
+    process.exit(1);
   }
 };
 

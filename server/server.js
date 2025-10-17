@@ -1,58 +1,58 @@
+import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import fs from "fs";
+import connectDB from "./config/db.js";
+import passport from "passport";
+import authRoutes from "./routes/authRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
 
-
-// here I get the docker error server unable to catch the env file so I use directory here !! 
+// --- Load .env from root ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const serverEnvPath = path.resolve(__dirname, ".env");
-const rootEnvPath = path.resolve(__dirname, "../.env");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-dotenv.config({ path: serverEnvPath });
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  dotenv.config({ path: rootEnvPath });
-}
+console.log("✅ Loaded ENV keys:");
+console.log({
+  PORT: process.env.PORT,
+  MONGO: process.env.MONGODB_URI ? "✅ found" : "❌ missing",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? "✅ found" : "❌ missing"
+});
 
-    import express from "express";
-import cors from "cors";
-import connectDB from "./config/db.js";
-   import couponRoutes from "./routes/couponRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import passport from "passport"
+// --- Connect to MongoDB ---
+connectDB();
+
 const app = express();
-    app.use(cors({
-        origin: [
-            'https://magiccouponfrontend.onrender.com',
-            // Alternative URL format
-            'http://localhost:3000', // For local development
-            process.env.CLIENT_URL
-        ].filter(Boolean),
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization']
-    }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-    connectDB();
 
-          // Initialize passport configurations
-           import './config/passport.js'
+// --- Middleware ---
+app.use(cors({
+  origin: [process.env.CLIENT_URL, "http://localhost:3000"].filter(Boolean),
+  credentials: true,
+}));
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  console.log("Incoming request:", req.method, req.url);
+  next();
+});
+
+// --- Passport setup ---
+import "./config/passport.js";
 app.use(passport.initialize());
-           
 
-      app.use("/api/coupons", couponRoutes);   
-app.use("/auth", authRoutes);          
+// --- Routes ---
+app.use("/auth", authRoutes);
+app.use("/api/coupons", couponRoutes);
 
-        app.get("/", (req, res) => {
-  res.send("This is the server of the MagicCoupon Web Application  whats up  hii its working");
-}); 
+app.get("/", (req, res) => {
+  res.send("🚀 MagicCoupon backend is running fine!");
+});
 
+// --- Server listen ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET ? "✅ exists" : "❌ missing");
-
+  console.log(`🌍 Server running on port ${PORT}`);
 });
