@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div className="text-center text-3xl font-bold text-gray-600">Loading...</div>; 
   }
 
   return (

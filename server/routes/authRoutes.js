@@ -49,9 +49,11 @@
   router.post("/promote", authMiddleware, requireAdmin, async (req, res) => {
     try {
       const { email } = req.body;
-      if (!email) return res.status(400).json({ success: false, message: "email is required" });
+      if (!email) 
+        return res.status(400).json({ success: false, message: "email is required" });
       const user = await User.findOneAndUpdate({ email }, { role: 'admin' }, { new: true });
-      if (!user) return res.status(404).json({ success: false, message: "User not found" });
+      if (!user)
+         return res.status(404).json({ success: false, message: "User not found" });
       res.json({ success: true, data: { _id: user._id, email: user.email, role: user.role } });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });

@@ -7,8 +7,13 @@ import { CategorySection } from "../components/CategorySection";
 const Home = () => {
   const { filteredCoupons, loading, error, searchInput, handleSearchChange, clearSearch } = useCoupons();
 
-  if (loading) return <div className="flex justify-center items-center h-64 text-xl text-indigo-600">Loading amazing deals...</div>;
-  if (error) return <div className="flex justify-center items-center h-64 text-red-600">{error}</div>;
+  if (loading) 
+    return 
+    <div className="flex justify-center items-center h-64 text-xl text-indigo-600">
+      Loading amazing deals...</div>;
+  if (error) 
+    return
+   <div className="flex justify-center items-center h-64 text-red-600">{error}</div>;
 
   return (
     <>
@@ -42,11 +47,11 @@ const Home = () => {
       <div className="my-6 px-4"><Banners /></div>
 
       {/* Coupons Grid */}
-      <div className="container mx-auto px-4 py-8">
-        {filteredCoupons.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCoupons.map((coupon) => (
-              <CouponCard key={coupon._id} coupon={coupon} />
+  <div className="container mx-auto px-4 py-8">
+    {filteredCoupons.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredCoupons.map((coupon) => (
+          <CouponCard key={coupon._id} coupon={coupon} />
             ))}
           </div>
         ) : (

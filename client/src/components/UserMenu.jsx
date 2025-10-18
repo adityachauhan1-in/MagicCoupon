@@ -63,6 +63,7 @@ const UserMenu = () => {
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-200 to-blue-200 
                             flex items-center justify-center text-lg font-bold text-gray-700 shadow-sm">
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+               {/* if user is logged in, show the first letter of the user's name */} */}
             </div>
             <div className="overflow-hidden">
               <p className="font-semibold text-gray-800 truncate">
@@ -79,7 +80,7 @@ const UserMenu = () => {
           {/* Menu Links */}
           <div className="flex flex-col space-y-2">
           
-            <Link
+            <Link // feedback link but it is not linked to the database this is for just showcasing 
               to="/FeedbackSupport"
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-purple-700 transition"
             >

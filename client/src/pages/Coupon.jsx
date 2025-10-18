@@ -5,6 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 import CouponCard from "../components/CouponCard";
 import { useCoupons } from "../Context/CouponContext";
 
+
 const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon-backend.onrender.com").replace(/^["']|["']$/g, '');
 
 const Coupons = () => {
@@ -13,7 +14,6 @@ const Coupons = () => {
   const [savedCoupons, setSavedCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-const [errors, setErrors] = useState({});
   
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchInput), 300);
@@ -36,16 +36,17 @@ const [errors, setErrors] = useState({});
         });
         console.log("this is res : " , res);
         if (res.data?.success) setSavedCoupons(res.data.data || []);
-        else toast.error(res.data?.message || " ji ha Failed to load saved coupons");
+        else toast.error(res.data?.message || "  Failed to load saved coupons");
       } catch (err) {
         // Error handled by user-friendly message display
-        toast.error(err.response?.data?.message || " ha ji Failed to load saved coupons");
+        console.log("this is err : " , err)
+        toast.error(err.response?.data?.message || " Failed to load saved coupons");
       } finally {
         setLoading(false);
       }
     };
     fetchSavedCoupons();
-  }, [user]);
+  }, [user]); // this is a dependency array that tells react to re-run the effect when the user state changes
 
   const filteredCoupons = savedCoupons.filter((coupon) => {
     const search = debouncedSearch.toLowerCase();
@@ -61,11 +62,14 @@ const [errors, setErrors] = useState({});
     setSavedCoupons((prev) => prev.filter((c) => c._id !== savedCouponId));
   };
 
-  if (loading) return <div className="flex justify-center items-center h-64 text-xl text-gray-600">Loading your coupons...</div>;
+  if (loading)
+     return 
+     <div className="flex justify-center items-center h-64 text-center text-bold text-xl text-purple-700">
+      Loading your coupons...</div>;
 
   return (
-    console.log("we are at saved coupon page"),
-    console.log("error is " , errors), 
+    
+   
     <div className="min-h-screen bg-gray-50 pt-10">
       {/* Page Header */}
       <div className="bg-gradient-to-r from-green-200 to-green-100 py-10 shadow-md">

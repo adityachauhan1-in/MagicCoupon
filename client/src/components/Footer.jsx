@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300 py-6 mt-10 text-center">
       {/* Brand */}
-      <h2 className="text-xl font-bold text-white mb-3">MagicCoupon</h2>
+      <h2 className="text-xl font-bold text-white mb-4">MagicCoupon</h2>
 
       {/* Social Icons */}
       <div className="flex justify-center space-x-6 mb-3">

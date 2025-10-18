@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-
+// for saved coupn we have different storage 
 const savedCouponSchema = mongoose.Schema({
    userId : {
     type: mongoose.Schema.Types.ObjectId,

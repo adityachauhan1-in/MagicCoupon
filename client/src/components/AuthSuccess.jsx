@@ -6,7 +6,7 @@ import { getMe } from "../services/api";
 
 
 
-export default function AuthSuccess(){
+export default function AuthSuccess() {
 
   const navigate = useNavigate(); 
   const { login } = useAuth();
@@ -21,16 +21,17 @@ export default function AuthSuccess(){
         .then((data) => {
           if (data?.success && data?.data) {
             login(data.data, token);
-            window.location.href = "/"; 
+            window.location.href = "/"; // redirect to home page 
           } else {
-            navigate("/auth");
+            navigate("/auth"); // redirect to auth page if login fails
           }
         })
-        .catch(() => navigate("/auth"));
+        .catch(() => navigate("/auth")); // same as above 
     }
-    else {
+          else {
       navigate("/auth")
     }
-  }, [navigate, login]) 
+  }, [navigate, login]) // depends on them to re-render the component
+
   return <p> Logging In ....</p>
-}
+  }

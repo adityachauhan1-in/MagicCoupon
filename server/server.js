@@ -26,10 +26,29 @@ connectDB();
 const app = express();
 
 // --- Middleware ---
-app.use(cors({
-  origin: [process.env.CLIENT_URL, "http://localhost:3000"].filter(Boolean),
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+].filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow non-browser or same-origin
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
-}));
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["Authorization"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+// Use a regex to match all paths for preflight; avoids path-to-regexp issues
+app.options(/.*/, cors(corsOptions));
 
 
 app.use(express.json());

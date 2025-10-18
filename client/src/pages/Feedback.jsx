@@ -16,7 +16,7 @@ const FeedbackSupport = () => {
     }
 
    
-    toast.success("Thank you for your feedback!");
+      toast.success("Thank you for your feedback!");
     
     setName("");
     setEmail("");
@@ -27,7 +27,7 @@ const FeedbackSupport = () => {
   return (
     console.log("we are at feedback page "),
      <div className="max-w-md mx-auto p-6 mt-16"> 
-      <h2 className="text-2xl font-bold mb-4 text-green-700">Feedback & Support</h2>
+      <h2 className="text-2xl font-bold mb-4 text-green-600">Feedback & Support</h2>
       <p className="text-gray-600 mb-4">
         Help us improve MagicCoupon by sharing your feedback or reporting issues.
       </p>

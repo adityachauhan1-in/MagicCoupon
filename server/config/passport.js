@@ -15,20 +15,20 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           let user = await User.findOne({ googleId: profile.id });
           if (!user) {
             user = await User.create({
-              googleId: profile.id,
-              name: profile.displayName,
+                googleId: profile.id,
+               name: profile.displayName,
               email: profile.emails[0].value,
-              avatar: profile.photos[0].value,
+                avatar: profile.photos[0].value,
             });
           }
-          return cb(null, user);
+           return cb(null, user);
         } catch (error) {
-          return cb(error, null);
+           return cb(error, null);
         }
       }
     )
   );
-  console.log("✅ Google OAuth strategy configured");
+  console.log(" Google OAuth strategy configured");
 } 
 
 

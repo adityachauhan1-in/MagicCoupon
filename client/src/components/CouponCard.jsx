@@ -224,15 +224,15 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
  onClick={handleSaveCoupon}
  disabled={!user || isCreator || saveStatus === "added"}
 >
- {isCreator
+   {isCreator
    ? "Your Coupon"
-   : saveStatus === "added"
+      : saveStatus === "added"
    ? "Added ✅"
-   : saveStatus === "already"
+                  : saveStatus === "already"
            ? "Already Saved ⚠️"
    : saveStatus === "error"
           ? "Failed ❌"
-   : "Get Coupon"}
+        : "Get Coupon"}
 </button>
 )}
           </div>
@@ -243,7 +243,7 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
                   <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100" onClick={closeAndMarkUsed}><X className="w-5 h-5 text-gray-600" /></button>
-                  <h3 className="text-lg font-semibold mb-2">{title}</h3>
+              <h3 className="text-lg font-semibold mb-2">{title}</h3>
                   <p className="text-sm text-gray-600 mb-4">{description}</p>
                           <div className="border rounded-xl p-4 text-center">
                     <div className="text-xs text-gray-500 mb-1">Your code</div>

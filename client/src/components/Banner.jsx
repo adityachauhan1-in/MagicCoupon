@@ -1,7 +1,10 @@
 import banner1 from '../assets/banner1.png';
 import banner2 from '../assets/banner2.png';
 import banner8 from '../assets/banner8.png';
+
     import banner7 from '../assets/banner7.png';
+    import banner4 from '../assets/banner4.png';
+
 
     import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; // for sliding the banners 
@@ -43,6 +46,8 @@ const settings = {
 };
 
  const bannerData = [
+  {img : banner4},
+
   { img: banner1,  },
   { img: banner2,  },
   { img: banner8,  },
@@ -55,12 +60,12 @@ export const Banners = () => {
   if (searchInput.trim() !== "" || selectedCategory !== "All") return null;
 
   return (
-                <div className="w-full max-w-[1200px] mx-auto my-6 mt-4 relative">
+                <div className="w-full max-w-10xl  mx-auto my-18 md:my-10 mt-12 md:mt-14 px-10 relative">
       <Slider {...settings}>
         {bannerData.map((banner, index) => (
    <div
             key={index}
-            className="h-[180px] md:h-[280px] lg:h-[320px] relative overflow-hidden rounded-2xl shadow-xl"
+            className="h-[200px] md:h-[320px] lg:h-[380px] xl:h-[420px] relative overflow-hidden rounded-2xl shadow-xl"
           >
                 <img
                   src={banner.img}

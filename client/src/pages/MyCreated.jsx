@@ -2,17 +2,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 import {
-  getMyCreatedCoupons,
+    getMyCreatedCoupons,
   createCoupon,
   updateCoupon,
-  deleteCoupon,
+     deleteCoupon,
  
 } from "../services/api";
 import { X, Trash2, AlertTriangle } from "lucide-react";
    
 const initialForm = {
-  title: "",
-  description: "",
+    title: "",
+   description: "",
   discountPercentage: 0,
   discountAmount: 0,
   minimumPurchase: 0,
@@ -20,7 +20,7 @@ const initialForm = {
   category: "Other",
   image: "",
   startDate: "",
-  endDate: "",
+      endDate: "",
   price: 0,
   store: "",
   terms: "",
@@ -71,28 +71,28 @@ const MyCreated = () => {
   }, [user]);
 
   const startCreate = () => {
-    setEditingId(null);
+     setEditingId(null);
     setForm({ ...initialForm, startDate: new Date().toISOString().slice(0, 10) });
-    setShowForm(true);
+      setShowForm(true);
     setErrors({});
   };
 
   const startEdit = (c) => {
     setEditingId(c._id);
     setForm({
-      title: c.title || "",
-      description: c.description || "",
+      title: c.title || "",// if user not put value then it will be empty string
+          description: c.description || "",
       discountPercentage: c.discountPercentage ?? 0,
       discountAmount: c.discountAmount ?? 0,
-      minimumPurchase: c.minimumPurchase ?? 0,
+           minimumPurchase: c.minimumPurchase ?? 0,
       code: c.code || "",
       category: c.category || "Other",
       image: c.image || "",
       startDate: c.startDate ? new Date(c.startDate).toISOString().slice(0, 10) : "",
-      endDate: c.endDate ? new Date(c.endDate).toISOString().slice(0, 10) : "",
+         endDate: c.endDate ? new Date(c.endDate).toISOString().slice(0, 10) : "",
       price: c.price ?? 0,
       store: c.store || "",
-      terms: c.terms || "",
+          terms: c.terms || "",
       usageLimit: c.usageLimit ?? -1,
       isActive: Boolean(c.isActive),
     });
@@ -317,7 +317,7 @@ const MyCreated = () => {
   };
 
   return (
-    console.log("error is " , errors),
+ 
     <div className="min-h-screen bg-gray-50 pt-20 pb-10">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

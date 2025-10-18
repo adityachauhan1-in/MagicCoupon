@@ -15,13 +15,13 @@ export const CategorySection = () => {
   const { selectedCategory, setSelectedCategory } = useCoupons();
 
   return (
-    <div className="flex gap-3 overflow-x-auto px-4 py-3 bg-white shadow-lg rounded-2xl justify-center scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-gray-100">
-      {categories.map((cat) => (
-        <button
+    <div className="flex gap-3 overflow-x-auto px-4 py-2 bg-purple-200 shadow-lg rounded-2xl justify-center scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-gray-100">
+               {categories.map((cat) => (
+               <button
           key={cat.name}
           onClick={() => setSelectedCategory(cat.name)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-md transition-all duration-300 ${
-            selectedCategory === cat.name
+          className={`flex items-center gap-4 px-4 py-2 rounded-full shadow-md transition-all duration-300 ${
+                   selectedCategory === cat.name
               ? "bg-indigo-600 text-white"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}

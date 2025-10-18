@@ -21,9 +21,9 @@ const Navbar = () => {
       <ul className="flex space-x-6 items-center">
        
         <li>
-          <NavLink
+                  <NavLink
             to="/"
-            className={({ isActive }) =>
+                 className={({ isActive }) =>
               `relative px-2 py-1 text-lg font-medium transition-all duration-200 
                ${
                  isActive

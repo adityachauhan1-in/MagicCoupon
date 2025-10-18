@@ -6,10 +6,10 @@ const CouponContext = createContext();
 export const useCoupons = () => useContext(CouponContext);
 
 export const CouponProvider = ({ children }) => { // all coupons route 
-  const [myCoupons, setMyCoupons] = useState([]);
+    const [myCoupons, setMyCoupons] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [filteredCoupons, setFilteredCoupons] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -24,8 +24,8 @@ export const CouponProvider = ({ children }) => { // all coupons route
   }, []);
 
             const addCoupon = (coupon) => {
-    const updated = [...myCoupons, coupon];
-    setMyCoupons(updated);
+    const updated = [...myCoupons, coupon];//...mycoupon is a spread operator that adds the new coupon to the myCoupons array
+    setMyCoupons(updated);//setMyCoupons is a function that updates the myCoupons state with the new array
            localStorage.setItem("myCoupons", JSON.stringify(updated));
   };
 
@@ -78,6 +78,7 @@ export const CouponProvider = ({ children }) => { // all coupons route
         
       } catch (error) {
        // Error handled by user-friendly message display 
+       toast.error(error.message || "Error searching coupons");
       }
     }
   };

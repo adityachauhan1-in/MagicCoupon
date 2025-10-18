@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const PasswordInput = ({ value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
-
+// showPassword is a state variable that determines whether to show the password or not
   return (
     <div>
       <div className="relative">

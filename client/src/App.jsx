@@ -37,6 +37,7 @@ const App = () => {
             <FeedbackSupport />
           </>} />
           <Route path='*' element={<>
+            {/* // this is error page */}
             <Navbar />
             <ErrorPage />
           </>} />

@@ -17,7 +17,7 @@ export const getAllCoupons = async (req, res) => {
 // Get coupon by ID for particular selected coupon ..
 export const getCouponById = async (req, res) => {
   try {
-    console.log("🔍 getCouponById called with id:", req.params.id);
+    console.log("getCouponById called with id:", req.params.id);
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid coupon  ID format dil legi " });
     }
@@ -53,7 +53,8 @@ export const createCoupon = async (req, res) => {
 export const updateCoupon = async (req, res) => {
   try {
          const coupon = await Coupon.findById(req.params.id);
-         if (!coupon) return res.status(404).json({ message: "Coupon not found" });
+         if (!coupon)
+           return res.status(404).json({ message: "Coupon not found" });
      
          const isCreator = coupon.creatorId?.toString() === req.userId.toString();
     const isAdmin = req.userRole === 'admin';
@@ -82,28 +83,23 @@ export const redeemCoupon = async (req, res) => {
     const userId = req.userId;
     const { id } = req.params;
 
-    // 1. Validate couponId
+    //  Validate couponId
     const coupon = await Coupon.findById(id);
     if (!coupon) {
       return res.status(404).json({ success: false, message: "Coupon not found" });
     }
   
-    // 2. Check self-use 
+    //  Check self-use 
     if (coupon.creatorId && coupon.creatorId.toString() === userId.toString()) {
       return res.status(403).json({ success: false, message: "You cannot redeem your own coupon" });
     }
 
-    // 3. Check expiry
+    //  Check expiry
     const now = new Date();
     if (coupon.endDate < now) {
       return res.status(400).json({ success: false, message: "Coupon has expired" });
     }
 
- 
-
-   
-
-    
     coupon.usedCount += 1;
     await coupon.save();
 
@@ -308,10 +304,9 @@ export const markSavedCouponUsed = async (req, res) => {
 
           // get my created coupons
 export const getMyCreatedCoupons = async (req, res) => {
-  console.log("hitt getMy creted coupons ")
+
         try {
-          console.log("we are at getMyCreatedCoupons");
-          console.log("req.userId is " + req.userId);
+     
     const coupons = await Coupon.find({ creatorId: req.userId });
       res.json({ success: true, data: coupons });
   } catch (error) {
