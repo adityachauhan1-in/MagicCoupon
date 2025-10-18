@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
         setUser(null);
       } 
-      console.log("Auth init done:", { token: localStorage.getItem("token"), user });
+      // console.log("Auth init done:", { token: localStorage.getItem("token"), user });
 
         setLoading(false);
       

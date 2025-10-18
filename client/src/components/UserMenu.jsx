@@ -63,7 +63,7 @@ const UserMenu = () => {
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-200 to-blue-200 
                             flex items-center justify-center text-lg font-bold text-gray-700 shadow-sm">
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-               {/* if user is logged in, show the first letter of the user's name */} */}
+               {/* if user is logged in, show the first letter of the user's name */} 
             </div>
             <div className="overflow-hidden">
               <p className="font-semibold text-gray-800 truncate">
