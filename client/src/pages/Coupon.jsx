@@ -34,12 +34,12 @@ const Coupons = () => {
                        headers: { Authorization: `Bearer ${token}` },
                        
         });
-        console.log("this is res : " , res);
+    
         if (res.data?.success) setSavedCoupons(res.data.data || []);
         else toast.error(res.data?.message || "  Failed to load saved coupons");
       } catch (err) {
         // Error handled by user-friendly message display
-        console.log("this is err : " , err)
+      
         toast.error(err.response?.data?.message || " Failed to load saved coupons");
       } finally {
         setLoading(false);

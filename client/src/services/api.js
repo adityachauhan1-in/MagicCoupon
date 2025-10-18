@@ -46,7 +46,7 @@ export const deleteCoupon = (id) => api.delete(`/api/coupons/${id}`).then(r => r
 // Fix getMyCreatedCoupons to handle errors properly
 export const getMyCreatedCoupons = async () => {
   try {
-    console.log(" Making API call to /api/coupons/my-create");
+   
     const response = await api.get(`/api/coupons/my-create`);
     console.log(" API Response:", response.data);
     return response.data;

@@ -303,7 +303,7 @@ const MyCreated = () => {
   };
   useEffect(() => {
     if (user) {
-      console.log("Loading my created coupons...");
+   
       load();
     }
   }, [user]);
