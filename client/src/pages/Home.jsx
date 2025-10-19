@@ -5,7 +5,10 @@ import { Banners } from "../components/Banner";
 import { CategorySection } from "../components/CategorySection";
 
 const Home = () => {
-  const { filteredCoupons, loading, error, searchInput, handleSearchChange, clearSearch } = useCoupons();
+  const { filteredCoupons, loading, error, searchInput,
+     handleSearchChange, clearSearch, coupons } = useCoupons();
+
+
 
   if (loading) 
     return 

@@ -48,7 +48,7 @@ export const getMyCreatedCoupons = async () => {
   try {
    
     const response = await api.get(`/api/coupons/my-create`);
-    console.log(" API Response:", response.data); return response.data;
+    return response.data;
   } catch (error) {
     console.error(" API Error details:", {
       status: error.response?.status,

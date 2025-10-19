@@ -10,12 +10,13 @@ const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || "https://magiccoupon
 const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   const { user } = useAuth();
 
-             const savedId = coupon?._id;
+  const savedId = coupon?._id;
   const [isUsed, setIsUsed] = useState(Boolean(coupon?.isUsed));
-         const [showModal, setShowModal] = useState(false);
-            const [copied, setCopied] = useState(false);
- const [imageError, setImageError] = useState(false);
-    const [saveStatus,setSaveStatus] = useState("default")
+  const [showModal, setShowModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("default");
+  const [isLoading, setIsLoading] = useState(false);
   
   // Check if current user is the creator of this coupon
            const isCreator = user && coupon?.creatorId && user._id === coupon.creatorId;
@@ -26,17 +27,22 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
   }, [coupon?.isUsed]);
 
   const handleSaveCoupon = async () => {
-  // user can not access their own created coupoon
+    // Prevent multiple clicks
+    if (isLoading) return;
+    
+    // user can not access their own created coupon
     if (isCreator) {
       toast.error("You cannot redeem your own coupon");
       return;
     }
 
+    setIsLoading(true);
+    
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Please login to save coupons");
-        setSaveStatus("error")
+        setSaveStatus("error");
         return;
       }
 
@@ -61,17 +67,24 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
     } catch (error) {
       // Error handled by toast notification
       if (error.response?.status === 400 && error.response.data.message === "Coupon already saved") {
-                   setSaveStatus("already")
-     
+        setSaveStatus("already");
       } else if (error.response?.status === 401) {
         localStorage.removeItem("token");
         toast.error("Session expired. Please login again");
       } else {
-        setSaveStatus("error")
+        setSaveStatus("error");
         const msg = error.response?.data?.message || "Failed to save coupon";
         toast.error(msg);
       }
-      setTimeout(() => setSaveStatus("default"),2000)
+      // Reset status after shorter delay
+      setTimeout(() => {
+        setSaveStatus("default");
+        setIsLoading(false);
+      }, 1500);
+    } finally {
+      if (saveStatus !== "error") {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -201,7 +214,11 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
           
                     <div className="mt-auto">
                       {isCouponPage ? (!isUsed ?  
-                      <button className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${!user || isCreator ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`} onClick={handleUseCoupon} disabled={!user || isCreator}>
+                      <button 
+              className={`w-full py-3 rounded-lg transition duration-200 font-semibold text-sm ${!user || isCreator ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`} 
+              onClick={handleUseCoupon} 
+              disabled={!user || isCreator}
+            >
               {isCreator ? "Your Coupon" : "Use Coupon"}
             </button> : 
 
@@ -213,6 +230,8 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
           ? "bg-gray-400 text-gray-700 cursor-not-allowed"
           : isCreator
           ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+          : isLoading
+          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
           : saveStatus === "added"
                  ? "bg-green-600 text-white"
           : saveStatus === "already"
@@ -222,10 +241,12 @@ const CouponCard = ({ coupon, isCouponPage = false, onRemove }) => {
      : "bg-blue-600 text-white hover:bg-blue-700"
  }`}
  onClick={handleSaveCoupon}
- disabled={!user || isCreator || saveStatus === "added"}
+ disabled={!user || isCreator || saveStatus === "added" || isLoading}
 >
    {isCreator
    ? "Your Coupon"
+      : isLoading
+   ? "Saving..."
       : saveStatus === "added"
    ? "Added ✅"
                   : saveStatus === "already"

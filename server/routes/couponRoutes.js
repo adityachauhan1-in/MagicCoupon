@@ -27,11 +27,44 @@ router.use((req, res, next) => {
 });
 
 // Public routes
-// Public routes
-router.get("/", getAllCoupons);
+router.get("/", async (req, res) => {
+  console.log("🔍 GET /api/coupons - Fetching all coupons");
+  try {
+    const coupons = await Coupon.find({ isActive: true });
+    console.log(`📦 Found ${coupons.length} active coupons`);
+    res.json({ success: true, data: coupons });
+  } catch (error) {
+    console.error("❌ Error fetching coupons:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 router.get("/search", searchCoupon);
-router.get("/categories/list", async (req, res) => { /* ... */ });
-router.get("/category/:category", async (req, res) => { /* ... */ });
+router.get("/categories/list", async (req, res) => {
+  try {
+    const categories = await Coupon.distinct('category');
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get("/category/:category", async (req, res) => {
+  try {
+    const { category } = req.params;
+    console.log(`🔍 Fetching coupons for category: ${category}`);
+    
+    const coupons = await Coupon.find({ 
+      category: category,
+      isActive: true 
+    });
+    
+    console.log(`📦 Found ${coupons.length} coupons for category: ${category}`);
+    res.json({ success: true, data: coupons });
+  } catch (error) {
+    console.error(`❌ Error fetching coupons for category ${category}:`, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Protected
 router.use(authMiddleware);

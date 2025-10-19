@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
 const CouponContext = createContext();
 
@@ -35,73 +35,107 @@ export const CouponProvider = ({ children }) => { // all coupons route
     localStorage.setItem("myCoupons", JSON.stringify(updated));
   };
 
+  // Fetch all coupons once (or when API base changes)
   useEffect(() => {
-    const fetchCoupons = async () => {
+    let isActive = true;
+    const fetchAllCoupons = async () => {
       try {
         setLoading(true);
-        let url =
-                      selectedCategory === "All"
-            ? `${API_BASE_URL}/api/coupons`
-            : `${API_BASE_URL}/api/coupons/category/${selectedCategory}`;
+        const url = `${API_BASE_URL}/api/coupons`;
+       
         const response = await fetch(url);
-                  const data = await response.json();
-
-                    if (data.success) {
-                      setCoupons(data.data);
-                      setFilteredCoupons(data.data);
-        } else {
-          setError(data.message || "Failed to fetch coupons");
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        if (data.success && isActive) {
+          setCoupons(data.data);
+          // Initialize filtered with current category if not All
+          setFilteredCoupons(
+            selectedCategory === "All"
+              ? data.data
+              : data.data.filter((c) => c.category === selectedCategory)
+          );
         }
       } catch (err) {
-        setError(err.message || "Error loading coupons");
+        console.error(`💥 Fetch Error (all):`, err);
+        if (isActive) setError(err.message || "Error loading coupons");
       } finally {
-        setLoading(false);
+        if (isActive) setLoading(false);
       }
     };
-    fetchCoupons();
-  }, [API_BASE_URL, selectedCategory]);
+    fetchAllCoupons();
+    return () => { isActive = false; };
+  }, [API_BASE_URL]);
+
+  // Client-side filter by selectedCategory
+  useEffect(() => {
+    if (selectedCategory === "All") {
+      setFilteredCoupons(coupons);
+    } else {
+      const filtered = coupons.filter((c) => c.category === selectedCategory);
+      setFilteredCoupons(filtered);
+    }
+  }, [selectedCategory, coupons]);
  
-  // Search filter
-  const handleSearchChange = async(value) => {
+  // Search filter with debouncing
+  const handleSearchChange = useCallback(async (value) => {
     setSearchInput(value);
     if (value.trim() === "") {
       setFilteredCoupons(coupons);
     } else {
       try {
-        
         const response = await axios.get(`${API_BASE_URL}/api/coupons/search`, {
           params: { q: value }
         });
-         if(response.data.success){
-          setFilteredCoupons(response.data.data)
-         }
-        
+        if (response.data.success) {
+          setFilteredCoupons(response.data.data);
+        }
       } catch (error) {
-       // Error handled by user-friendly message display 
-       toast.error(error.message || "Error searching coupons");
+        // Error handled by user-friendly message display 
+        toast.error(error.message || "Error searching coupons");
       }
     }
-  };
+  }, [coupons, API_BASE_URL]);
 
   
-  const clearSearch = () => {
+  const clearSearch = useCallback(() => {
     setSearchInput("");
     setFilteredCoupons(coupons);
-  };
+  }, [coupons]);
+
+  useEffect(() => {
+    // for checking perspective to check the categories button  
+  }, [selectedCategory, coupons, filteredCoupons]);
+
+  const contextValue = useMemo(() => ({
+    myCoupons,
+    addCoupon,
+    removeCoupon,
+    coupons,
+    filteredCoupons,
+    loading,
+    error,
+    searchInput,
+    selectedCategory,
+    setSelectedCategory,
+    handleSearchChange,
+    clearSearch,
+  }), [
+    myCoupons,
+    addCoupon,
+    removeCoupon,
+    coupons,
+    filteredCoupons,
+    loading,
+    error,
+    searchInput,
+    selectedCategory,
+    setSelectedCategory,
+    handleSearchChange,
+    clearSearch,
+  ]);
 
   return (
-    <CouponContext.Provider 
-    value={{ myCoupons, addCoupon, removeCoupon,
-      coupons,
-        filteredCoupons,
-        loading,
-        error,
-        searchInput,
-        selectedCategory,
-        setSelectedCategory,
-        handleSearchChange,
-        clearSearch,
-     }}>
+    <CouponContext.Provider value={contextValue}>
       {children}
     </CouponContext.Provider>
   );
